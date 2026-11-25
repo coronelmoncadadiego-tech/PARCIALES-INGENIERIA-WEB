@@ -3,8 +3,13 @@
  */
 
 const STORAGE_KEY = 'defensa_orbital_ar_highscore';
+const LEADERBOARD_KEY = 'defensa_orbital_leaderboard';
+const PLAYER_NAME_KEY = 'defensa_orbital_player_name';
+const MAX_LEADERBOARD_ENTRIES = 10;
 const STATION_CENTER = { x: 0, y: 1.6, z: 0 };
 const FUSE_DURATION_MS = 900;
+const CRITICAL_DISTANCE = 8;
+const PROXIMITY_COOLDOWN_MS = 800;
 
 /**
  * Motor de audio procedural basado en Web Audio API (sin archivos externos).
@@ -166,6 +171,27 @@ class SoundEngine {
     gain.connect(this.ctx.destination);
     osc.start(now);
     osc.stop(now + 0.35);
+  }
+
+  playProximityBeep() {
+    if (this.muted) return;
+    this.init();
+    if (!this.ctx) return;
+
+    const now = this.ctx.currentTime;
+    [0, 0.11].forEach((offset, idx) => {
+      const osc = this.ctx.createOscillator();
+      const gain = this.ctx.createGain();
+      const t = now + offset;
+      osc.type = 'sine';
+      osc.frequency.setValueAtTime(idx === 0 ? 880 : 1180, t);
+      gain.gain.setValueAtTime(0.14, t);
+      gain.gain.exponentialRampToValueAtTime(0.001, t + 0.085);
+      osc.connect(gain);
+      gain.connect(this.ctx.destination);
+      osc.start(t);
+      osc.stop(t + 0.09);
+    });
   }
 }
 
@@ -416,6 +442,46 @@ AFRAME.registerComponent('meteorite', {
 
     this.targetPos = new THREE.Vector3(STATION_CENTER.x, STATION_CENTER.y, STATION_CENTER.z);
     this.direction = new THREE.Vector3();
+    this.isCritical = false;
+
+    // Aura de peligro oculta hasta entrar en zona crítica (< 8m)
+    this.dangerRing = document.createElement('a-torus');
+    this.dangerRing.setAttribute('radius', String(this.data.radius * 1.45));
+    this.dangerRing.setAttribute('radius-tubular', '0.055');
+    this.dangerRing.setAttribute('color', '#ff0000');
+    this.dangerRing.setAttribute('material', 'shader: flat; emissive: #ff0000; transparent: true; opacity: 0.9');
+    this.dangerRing.setAttribute('visible', 'false');
+    disableChildRaycast(this.dangerRing);
+    this.el.appendChild(this.dangerRing);
+  },
+
+  setCriticalProximity(active, timeMs = 0) {
+    if (this.destroyed) return;
+    const mesh = this.el.getObject3D('mesh');
+
+    if (active) {
+      if (!this.isCritical) {
+        this.isCritical = true;
+        this.dangerRing?.setAttribute('visible', 'true');
+      }
+      const pulse = 0.55 + 0.45 * Math.sin(timeMs * 0.016);
+      if (mesh && mesh.material) {
+        mesh.material.emissive.set('#ff0000');
+        mesh.material.emissiveIntensity = 0.65 + pulse * 0.9;
+      }
+      if (this.dangerRing && this.dangerRing.object3D) {
+        const s = 1 + pulse * 0.18;
+        this.dangerRing.object3D.scale.set(s, s, s);
+        this.dangerRing.object3D.lookAt(this.targetPos);
+      }
+    } else if (this.isCritical) {
+      this.isCritical = false;
+      this.dangerRing?.setAttribute('visible', 'false');
+      if (mesh && mesh.material) {
+        mesh.material.emissive.set('#ff4500');
+        mesh.material.emissiveIntensity = 0.28;
+      }
+    }
   },
 
   applyDamage(amount, hitPoint) {
@@ -524,6 +590,46 @@ AFRAME.registerComponent('drone', {
     this.toCenter = new THREE.Vector3();
     this.sideAxis = new THREE.Vector3();
     this.upAxis = new THREE.Vector3(0, 1, 0);
+    this.isCritical = false;
+
+    // Aura de peligro para zona crítica (< 8m)
+    this.dangerRing = document.createElement('a-torus');
+    this.dangerRing.setAttribute('radius', '1.48');
+    this.dangerRing.setAttribute('radius-tubular', '0.06');
+    this.dangerRing.setAttribute('color', '#ff0000');
+    this.dangerRing.setAttribute('material', 'shader: flat; emissive: #ff0000; transparent: true; opacity: 0.92');
+    this.dangerRing.setAttribute('visible', 'false');
+    disableChildRaycast(this.dangerRing);
+    this.el.appendChild(this.dangerRing);
+  },
+
+  setCriticalProximity(active, timeMs = 0) {
+    if (this.destroyed) return;
+    const mesh = this.el.getObject3D('mesh');
+
+    if (active) {
+      if (!this.isCritical) {
+        this.isCritical = true;
+        this.dangerRing?.setAttribute('visible', 'true');
+      }
+      const pulse = 0.55 + 0.45 * Math.sin(timeMs * 0.016);
+      if (mesh && mesh.material) {
+        mesh.material.emissive.set('#ff0000');
+        mesh.material.emissiveIntensity = 0.8 + pulse * 0.9;
+      }
+      if (this.dangerRing && this.dangerRing.object3D) {
+        const s = 1 + pulse * 0.2;
+        this.dangerRing.object3D.scale.set(s, s, s);
+        this.dangerRing.object3D.lookAt(this.targetPos);
+      }
+    } else if (this.isCritical) {
+      this.isCritical = false;
+      this.dangerRing?.setAttribute('visible', 'false');
+      if (mesh && mesh.material) {
+        mesh.material.emissive.set(this.hp === 1 ? '#ffaa00' : '#ff2a55');
+        mesh.material.emissiveIntensity = this.hp === 1 ? 0.95 : 0.75;
+      }
+    }
   },
 
   applyDamage(amount, hitPoint) {
@@ -762,6 +868,15 @@ AFRAME.registerComponent('game-manager', {
     this.capsuleTimer = 0;
     this.lastManualFireTime = 0;
     this.lastLaserTime = 0;
+    this.lastProximityAlertTime = 0;
+    this.playerName = 'Piloto Anónimo';
+    this.lastHighlightIndex = -1;
+    this.lastRunOutsideTop10 = false;
+    this.leaderboardReturnScreen = null;
+
+    const THREE = AFRAME.THREE;
+    this.stationCenterVec = new THREE.Vector3(STATION_CENTER.x, STATION_CENTER.y, STATION_CENTER.z);
+    this.tmpLocalVec = new THREE.Vector3();
 
     // Referencias de escena
     this.spaceEnvEl = document.getElementById('space-environment');
@@ -775,8 +890,11 @@ AFRAME.registerComponent('game-manager', {
     this.topHudEl = document.getElementById('top-hud');
     this.startScreenEl = document.getElementById('start-screen');
     this.gameoverScreenEl = document.getElementById('gameover-screen');
+    this.leaderboardModalEl = document.getElementById('leaderboard-modal');
     this.mobileFireBtn = document.getElementById('mobile-fire-btn');
     this.waveBannerEl = document.getElementById('wave-banner');
+    this.proximityAlertEl = document.getElementById('proximity-alert');
+    this.proximityDirEl = document.getElementById('proximity-direction');
     this.damageFlashEl = document.getElementById('damage-flash');
     this.healFlashEl = document.getElementById('heal-flash');
 
@@ -792,6 +910,11 @@ AFRAME.registerComponent('game-manager', {
     this.gameoverHighScoreEl = document.getElementById('gameover-high-score');
     this.newRecordBadgeEl = document.getElementById('new-record-badge');
 
+    this.playerNameInput = document.getElementById('player-name');
+    this.leaderboardBodyEl = document.getElementById('leaderboard-body');
+    this.leaderboardEmptyEl = document.getElementById('leaderboard-empty');
+    this.leaderboardNoteEl = document.getElementById('leaderboard-note');
+
     this.startBtn = document.getElementById('start-btn');
     this.startArBtn = document.getElementById('start-ar-btn');
     this.hudArBtn = document.getElementById('hud-ar-btn');
@@ -799,10 +922,168 @@ AFRAME.registerComponent('game-manager', {
     this.muteBtn = document.getElementById('mute-btn');
     this.toggleTouchBtn = document.getElementById('toggle-touch-btn');
     this.alwaysShowFireChk = document.getElementById('always-show-fire-chk');
+    this.openLeaderboardStartBtn = document.getElementById('open-leaderboard-start-btn');
+    this.openLeaderboardGameoverBtn = document.getElementById('open-leaderboard-gameover-btn');
+    this.closeLeaderboardBtn = document.getElementById('close-leaderboard-btn');
+    this.clearLeaderboardBtn = document.getElementById('clear-leaderboard-btn');
 
+    this.loadSavedPlayerName();
+    this.syncHighScoreWithLeaderboard();
     this.bindEvents();
     this.checkARSupport();
     this.syncHUD();
+  },
+
+  loadSavedPlayerName() {
+    try {
+      const saved = localStorage.getItem(PLAYER_NAME_KEY);
+      if (saved && this.playerNameInput) {
+        this.playerNameInput.value = saved;
+      }
+    } catch (_) {}
+  },
+
+  resolvePlayerName() {
+    const raw = (this.playerNameInput?.value || '').trim().slice(0, 15);
+    if (raw) {
+      try {
+        localStorage.setItem(PLAYER_NAME_KEY, raw);
+      } catch (_) {}
+      return raw;
+    }
+    return 'Piloto Anónimo';
+  },
+
+  formatShortDate(date) {
+    const day = String(date.getDate()).padStart(2, '0');
+    const month = String(date.getMonth() + 1).padStart(2, '0');
+    const year = date.getFullYear();
+    return `${day}/${month}/${year}`;
+  },
+
+  loadLeaderboard() {
+    try {
+      const raw = localStorage.getItem(LEADERBOARD_KEY);
+      const parsed = raw ? JSON.parse(raw) : [];
+      if (!Array.isArray(parsed)) return [];
+      return parsed
+        .filter((item) => item && typeof item.nombre === 'string' && Number.isFinite(Number(item.puntuacion)))
+        .map((item) => ({
+          nombre: item.nombre,
+          puntuacion: Number(item.puntuacion),
+          oleada: Number(item.oleada) || 1,
+          fecha: typeof item.fecha === 'string' ? item.fecha : '--/--/----'
+        }));
+    } catch (_) {
+      return [];
+    }
+  },
+
+  saveLeaderboard(entries) {
+    try {
+      localStorage.setItem(LEADERBOARD_KEY, JSON.stringify(entries));
+    } catch (_) {}
+  },
+
+  syncHighScoreWithLeaderboard() {
+    const entries = this.loadLeaderboard();
+    if (entries.length > 0) {
+      const topScore = Math.max(...entries.map((e) => e.puntuacion));
+      if (topScore > this.highScore) {
+        this.highScore = topScore;
+        this.saveHighScore(this.highScore);
+      }
+    }
+  },
+
+  recordMatchToLeaderboard() {
+    const entries = this.loadLeaderboard();
+    const newEntry = {
+      nombre: this.playerName,
+      puntuacion: this.score,
+      oleada: this.wave,
+      fecha: this.formatShortDate(new Date())
+    };
+    entries.push(newEntry);
+    entries.sort((a, b) => (b.puntuacion - a.puntuacion) || (b.oleada - a.oleada));
+    const top10 = entries.slice(0, MAX_LEADERBOARD_ENTRIES);
+    this.lastHighlightIndex = top10.indexOf(newEntry);
+    this.lastRunOutsideTop10 = this.lastHighlightIndex === -1;
+    this.saveLeaderboard(top10);
+  },
+
+  renderLeaderboard() {
+    if (!this.leaderboardBodyEl) return;
+    const entries = this.loadLeaderboard();
+    this.leaderboardBodyEl.innerHTML = '';
+
+    if (entries.length === 0) {
+      this.leaderboardEmptyEl?.classList.remove('hidden');
+    } else {
+      this.leaderboardEmptyEl?.classList.add('hidden');
+    }
+
+    entries.forEach((entry, index) => {
+      const tr = document.createElement('tr');
+      if (index < 3) tr.classList.add(`rank-${index + 1}`);
+      if (index === this.lastHighlightIndex) tr.classList.add('current-run-row');
+
+      const posCell = document.createElement('td');
+      posCell.textContent = `#${index + 1}`;
+
+      const nameCell = document.createElement('td');
+      nameCell.textContent = entry.nombre;
+
+      const scoreCell = document.createElement('td');
+      scoreCell.textContent = String(entry.puntuacion);
+
+      const waveCell = document.createElement('td');
+      waveCell.textContent = `Ol. ${entry.oleada}`;
+
+      const dateCell = document.createElement('td');
+      dateCell.textContent = entry.fecha;
+
+      tr.append(posCell, nameCell, scoreCell, waveCell, dateCell);
+      this.leaderboardBodyEl.appendChild(tr);
+    });
+
+    if (this.leaderboardNoteEl) {
+      if (this.lastRunOutsideTop10 && this.state === 'gameover') {
+        this.leaderboardNoteEl.textContent = `Tu última partida (${this.playerName}: ${this.score} pts) quedó fuera del Top 10.`;
+        this.leaderboardNoteEl.classList.remove('hidden');
+      } else {
+        this.leaderboardNoteEl.classList.add('hidden');
+      }
+    }
+  },
+
+  openLeaderboard(sourceScreenEl) {
+    this.leaderboardReturnScreen = sourceScreenEl;
+    sourceScreenEl?.classList.add('hidden');
+    this.renderLeaderboard();
+    this.leaderboardModalEl?.classList.remove('hidden');
+  },
+
+  closeLeaderboard() {
+    this.leaderboardModalEl?.classList.add('hidden');
+    if (this.leaderboardReturnScreen) {
+      this.leaderboardReturnScreen.classList.remove('hidden');
+    }
+  },
+
+  clearLeaderboard() {
+    if (!window.confirm('¿Seguro que deseas borrar todo el historial de puntuaciones?')) {
+      return;
+    }
+    try {
+      localStorage.removeItem(LEADERBOARD_KEY);
+      localStorage.removeItem(STORAGE_KEY);
+    } catch (_) {}
+    this.highScore = 0;
+    this.lastHighlightIndex = -1;
+    this.lastRunOutsideTop10 = false;
+    this.syncHUD();
+    this.renderLeaderboard();
   },
 
   loadHighScore() {
@@ -885,6 +1166,36 @@ AFRAME.registerComponent('game-manager', {
     this.restartBtn?.addEventListener('click', () => {
       soundEngine.init();
       this.startGame();
+    });
+
+    this.playerNameInput?.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        soundEngine.init();
+        this.startGame();
+      }
+    });
+
+    this.openLeaderboardStartBtn?.addEventListener('click', () => {
+      this.openLeaderboard(this.startScreenEl);
+    });
+
+    this.openLeaderboardGameoverBtn?.addEventListener('click', () => {
+      this.openLeaderboard(this.gameoverScreenEl);
+    });
+
+    this.closeLeaderboardBtn?.addEventListener('click', () => {
+      this.closeLeaderboard();
+    });
+
+    this.leaderboardModalEl?.addEventListener('click', (e) => {
+      if (e.target === this.leaderboardModalEl) {
+        this.closeLeaderboard();
+      }
+    });
+
+    this.clearLeaderboardBtn?.addEventListener('click', () => {
+      this.clearLeaderboard();
     });
 
     this.muteBtn?.addEventListener('click', () => {
@@ -974,6 +1285,7 @@ AFRAME.registerComponent('game-manager', {
       if (this.waveKills >= this.waveTarget) {
         this.advanceWave();
       }
+      this.updateProximityAlert(performance.now());
       this.syncHUD();
     });
 
@@ -1003,6 +1315,7 @@ AFRAME.registerComponent('game-manager', {
       triggerHaptic(40);
       this.spawnExplosion(position, color, 12);
       this.triggerScreenFlash(this.damageFlashEl);
+      this.updateProximityAlert(performance.now());
       this.syncHUD();
 
       if (this.shield <= 0) {
@@ -1013,6 +1326,12 @@ AFRAME.registerComponent('game-manager', {
 
   startGame() {
     this.clearDynamicEntities();
+    this.hideProximityAlert();
+    this.playerName = this.resolvePlayerName();
+    this.lastHighlightIndex = -1;
+    this.lastRunOutsideTop10 = false;
+    this.lastProximityAlertTime = 0;
+
     this.score = 0;
     this.shield = 100;
     this.wave = 1;
@@ -1024,6 +1343,7 @@ AFRAME.registerComponent('game-manager', {
 
     this.startScreenEl?.classList.add('hidden');
     this.gameoverScreenEl?.classList.add('hidden');
+    this.leaderboardModalEl?.classList.add('hidden');
     this.newRecordBadgeEl?.classList.add('hidden');
     this.topHudEl?.classList.remove('hidden');
     this.mobileFireBtn?.classList.remove('hidden');
@@ -1039,6 +1359,7 @@ AFRAME.registerComponent('game-manager', {
 
   endGame() {
     this.state = 'gameover';
+    this.hideProximityAlert();
     this.clearDynamicEntities();
     this.reticleEl?.components['reticle-feedback']?.resetAppearance();
 
@@ -1048,6 +1369,8 @@ AFRAME.registerComponent('game-manager', {
       this.saveHighScore(this.highScore);
       isNewRecord = true;
     }
+
+    this.recordMatchToLeaderboard();
 
     this.topHudEl?.classList.add('hidden');
     this.mobileFireBtn?.classList.add('hidden');
@@ -1062,6 +1385,73 @@ AFRAME.registerComponent('game-manager', {
 
     this.syncHUD();
     this.gameoverScreenEl?.classList.remove('hidden');
+  },
+
+  hideProximityAlert() {
+    this.proximityAlertEl?.classList.add('hidden');
+  },
+
+  getRelativeDirectionLabel(enemyPos) {
+    const camObj = this.cameraEl?.object3D;
+    if (!camObj) return 'FRENTE';
+
+    camObj.updateMatrixWorld();
+    this.tmpLocalVec.copy(enemyPos);
+    camObj.worldToLocal(this.tmpLocalVec);
+
+    const forward = -this.tmpLocalVec.z;
+    const right = this.tmpLocalVec.x;
+    const angle = Math.atan2(right, forward);
+
+    if (Math.abs(angle) <= Math.PI / 4) return 'FRENTE';
+    if (angle > Math.PI / 4 && angle <= (3 * Math.PI) / 4) return 'DERECHA';
+    if (angle < -Math.PI / 4 && angle >= (-3 * Math.PI) / 4) return 'IZQUIERDA';
+    return 'ATRÁS';
+  },
+
+  updateProximityAlert(timeMs) {
+    if (this.state !== 'playing' || !this.enemiesContainer) {
+      this.hideProximityAlert();
+      return;
+    }
+
+    let closestDist = Infinity;
+    let closestPos = null;
+
+    const children = this.enemiesContainer.children;
+    for (let i = 0; i < children.length; i++) {
+      const entity = children[i];
+      const comp = entity.components?.meteorite || entity.components?.drone;
+      if (!comp || comp.destroyed) continue;
+
+      const pos = entity.object3D.position;
+      const dist = pos.distanceTo(this.stationCenterVec);
+      const isCritical = dist < CRITICAL_DISTANCE;
+
+      comp.setCriticalProximity(isCritical, timeMs);
+
+      if (isCritical && dist < closestDist) {
+        closestDist = dist;
+        closestPos = pos;
+      }
+    }
+
+    if (closestPos) {
+      const dirLabel = this.getRelativeDirectionLabel(closestPos);
+      if (this.proximityDirEl) {
+        this.proximityDirEl.textContent = dirLabel;
+      }
+      this.proximityAlertEl?.classList.remove('hidden');
+
+      const now = performance.now();
+      if (now - this.lastProximityAlertTime >= PROXIMITY_COOLDOWN_MS) {
+        this.lastProximityAlertTime = now;
+        soundEngine.playProximityBeep();
+        triggerHaptic([60, 40, 60]);
+      }
+    } else {
+      this.hideProximityAlert();
+    }
   },
 
   clearDynamicEntities() {
@@ -1295,5 +1685,7 @@ AFRAME.registerComponent('game-manager', {
       }
       this.capsuleTimer = 14 + Math.random() * 7;
     }
+
+    this.updateProximityAlert(time);
   }
 });

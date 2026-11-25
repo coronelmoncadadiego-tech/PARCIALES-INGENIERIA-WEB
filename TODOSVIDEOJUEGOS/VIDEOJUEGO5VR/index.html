@@ -136,7 +136,11 @@
       </div>
     </header>
 
-    <!-- Anuncio de oleada y estado del objetivo -->
+    <!-- Alerta de proximidad crítica, anuncio de oleada y estado del objetivo -->
+    <div id="proximity-alert" class="hidden" role="alert" aria-live="assertive">
+      <span class="alert-main">⚠️ ¡ALERTA! IMPACTO INMINENTE</span>
+      <span id="proximity-direction" class="alert-dir">FRENTE</span>
+    </div>
     <div id="wave-banner" class="hidden" aria-live="polite">OLEADA 1</div>
     <div id="lock-indicator" class="hidden">OBJETIVO EN MIRA</div>
 
@@ -200,9 +204,15 @@
           <span>Mostrar siempre botón táctil de disparo en el HUD</span>
         </label>
 
+        <div class="player-input-group">
+          <label for="player-name">NOMBRE DEL PILOTO</label>
+          <input type="text" id="player-name" maxlength="15" placeholder="Tu nombre o alias" autocomplete="off">
+        </div>
+
         <div class="modal-actions">
           <button id="start-btn" class="primary-btn" type="button">INICIAR MISIÓN</button>
           <button id="start-ar-btn" class="secondary-btn hidden" type="button">INICIAR EN REALIDAD AUMENTADA (AR)</button>
+          <button id="open-leaderboard-start-btn" class="secondary-btn leaderboard-btn" type="button">🏆 Tabla de Puntuación</button>
         </div>
       </div>
     </section>
@@ -231,6 +241,40 @@
 
         <div class="modal-actions">
           <button id="restart-btn" class="primary-btn" type="button">REINTENTAR MISIÓN</button>
+          <button id="open-leaderboard-gameover-btn" class="secondary-btn leaderboard-btn" type="button">🏆 Tabla de Puntuación</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal de Tabla de Clasificación (Top 10) -->
+    <section id="leaderboard-modal" class="modal-overlay hidden" aria-modal="true" role="dialog" aria-labelledby="leaderboard-title">
+      <div class="modal-card leaderboard-card hud-interactive">
+        <div class="badge-top">REGISTRO ESTELAR // TOP 10</div>
+        <h2 id="leaderboard-title" class="gameover-title">🏆 TABLA DE PUNTUACIÓN</h2>
+
+        <div class="leaderboard-table-wrap">
+          <table class="leaderboard-table">
+            <thead>
+              <tr>
+                <th>POS</th>
+                <th>PILOTO</th>
+                <th>PUNTOS</th>
+                <th>OLEADA</th>
+                <th>FECHA</th>
+              </tr>
+            </thead>
+            <tbody id="leaderboard-body"></tbody>
+          </table>
+          <p id="leaderboard-empty" class="leaderboard-empty hidden">
+            Aún no hay partidas registradas. ¡Defiende la estación para entrar al Top 10!
+          </p>
+        </div>
+
+        <p id="leaderboard-note" class="leaderboard-note hidden"></p>
+
+        <div class="modal-actions">
+          <button id="close-leaderboard-btn" class="primary-btn" type="button">VOLVER</button>
+          <button id="clear-leaderboard-btn" class="danger-link-btn" type="button">Borrar Historial</button>
         </div>
       </div>
     </section>
