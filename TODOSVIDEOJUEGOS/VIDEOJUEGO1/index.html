@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Halloween Pong 2D - Spooky Pixel Art</title>
+  <!-- Fuente Retro 8-bits -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="arcade-cabinet spooky-cabinet">
+    <div class="cabinet-header" style="display: flex; justify-content: space-between; align-items: center; width: 100%; flex-wrap: wrap; gap: 8px;">
+      <a href="../../index.html#videojuegos" style="font-family: 'Press Start 2P', monospace; font-size: 8px; color: #ffaa6b; text-decoration: none; border: 1px solid #ff7518; padding: 6px 10px; border-radius: 4px; background: rgba(0,0,0,0.6); transition: all 0.2s;">← PORTAFOLIO</a>
+      <div class="cabinet-brand">🎃 SPOOKY ARCADE • NOCHE DE BRUJAS 🎃</div>
+      <span style="font-size: 8px; color: #a29bfe; font-family: 'Press Start 2P', monospace;">VER. 1.0</span>
+    </div>
+
+    <div class="crt-frame">
+      <!-- Telarañas decorativas en las esquinas -->
+      <div class="cobweb top-left">🕸️</div>
+      <div class="cobweb top-right">🕸️</div>
+      <div class="cobweb bottom-left">🦇</div>
+      <div class="cobweb bottom-right">🦇</div>
+
+      <!-- Pantalla del juego -->
+      <canvas id="gameCanvas" width="800" height="500"></canvas>
+      
+      <!-- Efecto de líneas de escaneo CRT y resplandor fantasmal -->
+      <div class="scanlines"></div>
+      <div class="crt-glow spooky-glow"></div>
+
+      <!-- Menú Principal -->
+      <div id="mainMenu" class="overlay-screen">
+        <div class="spooky-bats-anim">🦇 🎃 🦇</div>
+        <h1 class="game-title halloween-title">HALLOWEEN PONG</h1>
+        <p class="subtitle halloween-subtitle">💀 DUELO DE ALMAS PIXEL ART 💀</p>
+        
+        <div class="menu-box spooky-box">
+          <div class="option-row">
+            <span class="option-label">MODO DE JUEGO:</span>
+            <div class="btn-group">
+              <button id="btnMode1P" class="pixel-btn active">🎃 1 JUGADOR (VS DEMONIO)</button>
+              <button id="btnMode2P" class="pixel-btn">👻 2 JUGADORES (LOCAL)</button>
+            </div>
+          </div>
+
+          <div class="option-row" id="difficultyGroup">
+            <span class="option-label">DIFICULTAD DEL DEMONIO:</span>
+            <div class="btn-group">
+              <button class="pixel-btn diff-btn" data-diff="easy">ESPÍRITU</button>
+              <button class="pixel-btn diff-btn active" data-diff="normal">MONSTRUO</button>
+              <button class="pixel-btn diff-btn" data-diff="hard">PESADILLA</button>
+            </div>
+          </div>
+
+          <div class="option-row">
+            <span class="option-label">ALMAS PARA GANAR:</span>
+            <div class="btn-group">
+              <button class="pixel-btn pts-btn active" data-pts="5">5</button>
+              <button class="pixel-btn pts-btn" data-pts="10">10</button>
+              <button class="pixel-btn pts-btn" data-pts="15">15</button>
+            </div>
+          </div>
+
+          <button id="btnStart" class="pixel-btn btn-primary pulse halloween-btn-main">
+            🎃 ¡INSERT SOUL / JUGAR! 💀
+          </button>
+        </div>
+
+        <div class="controls-guide spooky-guide">
+          <div class="guide-col">
+            <span class="player-tag p1-tag">🎃 JUGADOR 1</span>
+            <span class="keys"><kbd>W</kbd> Subir / <kbd>S</kbd> Bajar</span>
+          </div>
+          <div class="guide-col" id="p2Guide">
+            <span class="player-tag p2-tag">👻 DEMONIO CPU</span>
+            <span class="keys">Automático</span>
+          </div>
+          <div class="guide-col">
+            <span class="player-tag special-tag">⚰️ EXTRAS</span>
+            <span class="keys"><kbd>P</kbd> Pausa | <kbd>M</kbd> Audio</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Menú de Pausa -->
+      <div id="pauseMenu" class="overlay-screen hidden">
+        <h2 class="menu-heading blink spooky-pause">🦇 RITUAL EN PAUSA 🦇</h2>
+        <div class="menu-box compact spooky-box">
+          <button id="btnResume" class="pixel-btn btn-primary">CONTINUAR INVOCACIÓN</button>
+          <button id="btnRestart" class="pixel-btn">REINICIAR RITUAL</button>
+          <button id="btnQuit" class="pixel-btn btn-danger">MENÚ PRINCIPAL</button>
+        </div>
+        <p class="tip-text">Presiona 'P' para regresar a la pesadilla</p>
+      </div>
+
+      <!-- Pantalla de Fin de Juego -->
+      <div id="gameOverMenu" class="overlay-screen hidden">
+        <h2 id="winnerText" class="winner-heading spooky-winner">¡EL JUGADOR 1 RECLAMA TU ALMA!</h2>
+        <div class="score-summary">
+          <div class="score-box p1-box">
+            <span class="sb-label">🎃 JUGADOR 1</span>
+            <span id="finalP1Score" class="sb-score">0</span>
+          </div>
+          <span class="sb-divider">💀</span>
+          <div class="score-box p2-box">
+            <span id="finalP2Label" class="sb-label">DEMONIO</span>
+            <span id="finalP2Score" class="sb-score">0</span>
+          </div>
+        </div>
+        <div class="menu-box compact spooky-box">
+          <button id="btnPlayAgain" class="pixel-btn btn-primary pulse halloween-btn-main">NUEVA PESADILLA 🎃</button>
+          <button id="btnBackToMenu" class="pixel-btn">MENÚ PRINCIPAL</button>
+        </div>
+      </div>
+
+      <!-- Barra flotante de controles rápidos HUD -->
+      <div id="gameHUD" class="hud-top hidden">
+        <button id="btnAudioToggle" class="hud-btn" title="Silenciar / Activar sonido (M)">🔊</button>
+        <button id="btnPauseToggle" class="hud-btn" title="Pausar juego (P)">⏸</button>
+      </div>
+    </div>
+
+    <div class="cabinet-footer">
+      <span>🎃 HALLOWEEN 2D • CALAVERA RODANTE • SONIDOS DE ULTRATUMBA 🦇</span>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

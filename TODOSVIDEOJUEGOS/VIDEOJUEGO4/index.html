@@ -1,0 +1,404 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Futbolito Arcade · Estadio Nocturno</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Orbitron:wght@600;700;900&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet"
+  />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="stadium-backdrop" aria-hidden="true"></div>
+
+  <!-- MENÚ DE INICIO -->
+  <main id="start-screen" class="screen screen-active">
+    <section class="menu-card">
+      <header class="menu-header">
+        <span class="arcade-pill">ARCADE 1J VS CPU · 2J TECLADO COMPARTIDO</span>
+        <h1 class="game-title">
+          <span class="title-accent-blue">FUTBOLITO</span>
+          <span class="title-accent-gold">NOCTURNO</span>
+        </h1>
+        <p class="game-subtitle">
+          Elige modo 2 jugadores o desafía a la CPU. Recoge ítems especiales en la cancha y personaliza tu skin.
+        </p>
+      </header>
+
+      <form id="start-form" class="setup-form" novalidate>
+        <!-- Selector de Modo de Juego -->
+        <div class="mode-selector-bar">
+          <div class="mode-options" role="radiogroup" aria-label="Modo de juego">
+            <button type="button" class="mode-pill active" data-mode="2p">
+              👥 2 Jugadores (Local)
+            </button>
+            <button type="button" class="mode-pill" data-mode="cpu">
+              🤖 1 Jugador vs CPU
+            </button>
+          </div>
+        </div>
+
+        <div class="players-setup-grid">
+          <!-- Jugador 1 -->
+          <div class="player-setup-box team-blue-box">
+            <div class="team-badge team-blue-badge">EQUIPO AZUL · IZQUIERDA</div>
+            <label for="p1-name" class="input-label">Nombre Jugador 1</label>
+            <input
+              type="text"
+              id="p1-name"
+              class="player-input"
+              maxlength="16"
+              placeholder="Ej. Carlos"
+              value="Jugador 1"
+              autocomplete="off"
+              required
+            />
+
+            <!-- Selector de Skin J1 -->
+            <div class="skin-picker-block">
+              <span class="input-label">Skin de Ficha: <strong id="p1-skin-label">Neón Clásico</strong></span>
+              <div class="skin-swatches" data-player="1">
+                <button type="button" class="skin-btn active" data-skin="classic" data-label="Neón Clásico" title="Neón Clásico">
+                  <span class="skin-dot skin-dot-classic-blue"></span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="cyber" data-label="Ciborg" title="Ciborg">
+                  <span class="skin-dot skin-dot-cyber">🤖</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="flame" data-label="Fuego" title="Fuego">
+                  <span class="skin-dot skin-dot-flame">🔥</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="galaxy" data-label="Galaxia" title="Galaxia">
+                  <span class="skin-dot skin-dot-galaxy">🌌</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="gold" data-label="Campeón Oro" title="Campeón Oro">
+                  <span class="skin-dot skin-dot-gold">👑</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="ice" data-label="Ártico" title="Ártico">
+                  <span class="skin-dot skin-dot-ice">❄️</span>
+                </button>
+              </div>
+            </div>
+
+            <div class="controls-mini">
+              <div class="control-row">
+                <span class="keys-group"><kbd>W</kbd><kbd>A</kbd><kbd>S</kbd><kbd>D</kbd></span>
+                <span>Moverse</span>
+              </div>
+              <div class="control-row">
+                <span class="keys-group"><kbd class="kbd-wide">Espacio</kbd></span>
+                <span>Patada / Turbo</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="vs-divider" aria-hidden="true">
+            <span>VS</span>
+          </div>
+
+          <!-- Jugador 2 / CPU -->
+          <div class="player-setup-box team-red-box">
+            <div id="p2-team-badge" class="team-badge team-red-badge">EQUIPO ROJO · DERECHA</div>
+            <label for="p2-name" id="p2-name-label" class="input-label">Nombre Jugador 2</label>
+            <input
+              type="text"
+              id="p2-name"
+              class="player-input"
+              maxlength="16"
+              placeholder="Ej. Ana"
+              value="Jugador 2"
+              autocomplete="off"
+              required
+            />
+
+            <!-- Selector de Dificultad CPU (solo visible en modo CPU) -->
+            <div id="cpu-difficulty-block" class="cpu-difficulty-block hidden">
+              <span class="input-label">Dificultad de la CPU</span>
+              <div class="cpu-diff-pills" role="radiogroup" aria-label="Dificultad CPU">
+                <button type="button" class="diff-pill" data-diff="easy">Fácil</button>
+                <button type="button" class="diff-pill active" data-diff="normal">Normal</button>
+                <button type="button" class="diff-pill" data-diff="hard">Difícil</button>
+              </div>
+            </div>
+
+            <!-- Selector de Skin J2 -->
+            <div class="skin-picker-block">
+              <span class="input-label">Skin de Ficha: <strong id="p2-skin-label">Neón Clásico</strong></span>
+              <div class="skin-swatches" data-player="2">
+                <button type="button" class="skin-btn active" data-skin="classic" data-label="Neón Clásico" title="Neón Clásico">
+                  <span class="skin-dot skin-dot-classic-red"></span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="cyber" data-label="Ciborg" title="Ciborg">
+                  <span class="skin-dot skin-dot-cyber">🤖</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="flame" data-label="Fuego" title="Fuego">
+                  <span class="skin-dot skin-dot-flame">🔥</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="galaxy" data-label="Galaxia" title="Galaxia">
+                  <span class="skin-dot skin-dot-galaxy">🌌</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="gold" data-label="Campeón Oro" title="Campeón Oro">
+                  <span class="skin-dot skin-dot-gold">👑</span>
+                </button>
+                <button type="button" class="skin-btn" data-skin="ice" data-label="Ártico" title="Ártico">
+                  <span class="skin-dot skin-dot-ice">❄️</span>
+                </button>
+              </div>
+            </div>
+
+            <div id="p2-controls-human" class="controls-mini">
+              <div class="control-row">
+                <span class="keys-group"><kbd>↑</kbd><kbd>←</kbd><kbd>↓</kbd><kbd>→</kbd></span>
+                <span>Moverse</span>
+              </div>
+              <div class="control-row">
+                <span class="keys-group"><kbd class="kbd-wide">Enter</kbd> / <kbd class="kbd-wide">Shift Der.</kbd></span>
+                <span>Patada / Turbo</span>
+              </div>
+            </div>
+
+            <div id="p2-controls-cpu" class="controls-mini cpu-info-mini hidden">
+              <div class="control-row">
+                <span>Inteligencia Artificial</span>
+                <strong>Defensa + Ataque</strong>
+              </div>
+              <div class="control-row">
+                <span>Recoge ítems</span>
+                <strong>Sí (automático)</strong>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <p id="form-error" class="form-error" role="alert" aria-live="polite"></p>
+
+        <!-- Configuración de Goles e Ítems -->
+        <div class="match-settings-row">
+          <div class="goal-selector-group">
+            <span class="selector-label">Goles para ganar:</span>
+            <div class="goal-options" role="radiogroup" aria-label="Goles para ganar">
+              <button type="button" class="goal-pill" data-goals="3">3 Goles</button>
+              <button type="button" class="goal-pill active" data-goals="5">5 Goles</button>
+              <button type="button" class="goal-pill" data-goals="7">7 Goles</button>
+            </div>
+          </div>
+
+          <div class="items-toggle-group">
+            <span class="selector-label">Ítems de mejora:</span>
+            <button type="button" id="btn-toggle-items" class="items-toggle-pill active" aria-pressed="true">
+              ✨ Activados
+            </button>
+          </div>
+        </div>
+
+        <div class="menu-actions">
+          <button type="submit" id="btn-start-match" class="btn btn-primary">
+            <span class="btn-icon">⚽</span>
+            <span>¡Iniciar Partido!</span>
+          </button>
+          <button type="button" id="btn-menu-leaderboard" class="btn btn-secondary">
+            <span class="btn-icon">🏆</span>
+            <span>Tabla de Puntuaciones</span>
+          </button>
+        </div>
+      </form>
+    </section>
+  </main>
+
+  <!-- PANTALLA DE JUEGO -->
+  <section id="game-screen" class="screen" aria-hidden="true">
+    <header class="hud">
+      <!-- Marcador Jugador 1 -->
+      <div class="hud-player hud-blue">
+        <div class="hud-player-meta">
+          <div class="hud-tag-row">
+            <span class="hud-team-tag">AZUL</span>
+            <span id="hud-p1-effects" class="hud-effects"></span>
+          </div>
+          <span id="hud-p1-name" class="hud-name">Jugador 1</span>
+          <div class="turbo-meter" title="Carga de Patada / Turbo">
+            <div id="hud-p1-turbo" class="turbo-fill turbo-blue"></div>
+          </div>
+        </div>
+        <div id="hud-p1-score" class="hud-score score-blue">0</div>
+      </div>
+
+      <!-- Centro HUD -->
+      <div class="hud-center">
+        <div class="hud-match-info">
+          <span id="hud-goal-target" class="hud-target">META: 5 GOLES</span>
+          <span id="hud-timer" class="hud-clock">00:00</span>
+        </div>
+        <div class="hud-controls-bar">
+          <button type="button" id="btn-sound" class="hud-icon-btn" title="Activar / Silenciar sonido (M)">
+            🔊
+          </button>
+          <button type="button" id="btn-pause" class="hud-icon-btn" title="Pausar partido (P)">
+            ⏸️
+          </button>
+          <button type="button" id="btn-hud-leaderboard" class="hud-icon-btn" title="Tabla de Puntuaciones">
+            🏆
+          </button>
+          <button type="button" id="btn-hud-menu" class="hud-icon-btn" title="Volver al Menú">
+            🏠
+          </button>
+        </div>
+      </div>
+
+      <!-- Marcador Jugador 2 -->
+      <div class="hud-player hud-red">
+        <div id="hud-p2-score" class="hud-score score-red">0</div>
+        <div class="hud-player-meta hud-meta-right">
+          <div class="hud-tag-row hud-tag-row-right">
+            <span id="hud-p2-effects" class="hud-effects"></span>
+            <span id="hud-p2-team-tag" class="hud-team-tag">ROJO</span>
+          </div>
+          <span id="hud-p2-name" class="hud-name">Jugador 2</span>
+          <div class="turbo-meter" title="Carga de Patada / Turbo">
+            <div id="hud-p2-turbo" class="turbo-fill turbo-red"></div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <div class="arena-wrapper">
+      <canvas id="game-canvas" width="1100" height="620" aria-label="Cancha de Futbolito 2D"></canvas>
+
+      <!-- Overlay de Pausa -->
+      <div id="pause-overlay" class="canvas-overlay hidden">
+        <div class="overlay-box">
+          <h2>PARTIDO EN PAUSA</h2>
+          <p>Presiona <kbd>P</kbd> o haz clic para continuar</p>
+          <div class="overlay-buttons">
+            <button type="button" id="btn-resume" class="btn btn-primary">Reanudar</button>
+            <button type="button" id="btn-restart-match" class="btn btn-secondary">Reiniciar Partido</button>
+            <button type="button" id="btn-pause-menu" class="btn btn-ghost">Salir al Menú</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer id="controls-strip" class="controls-strip">
+      <span><strong class="text-blue">Azul:</strong> WASD + Espacio (Patada)</span>
+      <span class="strip-sep">•</span>
+      <span id="strip-p2"><strong class="text-red">Rojo:</strong> Flechas + Enter / Shift Der. (Patada)</span>
+      <span class="strip-sep">•</span>
+      <span><strong>P:</strong> Pausa &nbsp;|&nbsp; <strong>M:</strong> Sonido</span>
+    </footer>
+  </section>
+
+  <!-- MODAL DE FIN DE PARTIDO -->
+  <div id="gameover-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="gameover-title">
+    <div class="modal-card gameover-card">
+      <div class="trophy-glow">🏆</div>
+      <span id="gameover-badge" class="winner-badge">CAMPEÓN DEL PARTIDO</span>
+      <h2 id="gameover-title" class="gameover-title">¡Victoria!</h2>
+
+      <div class="final-scoreboard">
+        <div class="final-team">
+          <span id="final-p1-name" class="final-name text-blue">Jugador 1</span>
+          <span id="final-p1-score" class="final-digits score-blue">5</span>
+        </div>
+        <span class="final-dash">-</span>
+        <div class="final-team">
+          <span id="final-p2-score" class="final-digits score-red">3</span>
+          <span id="final-p2-name" class="final-name text-red">Jugador 2</span>
+        </div>
+      </div>
+
+      <p id="gameover-stats" class="gameover-stats">Duración: 01:45 · Guardado en el ranking</p>
+
+      <div class="modal-actions">
+        <button type="button" id="btn-rematch" class="btn btn-primary">🔄 Revancha</button>
+        <button type="button" id="btn-gameover-leaderboard" class="btn btn-secondary">🏆 Ver Tabla</button>
+        <button type="button" id="btn-gameover-menu" class="btn btn-ghost">🏠 Menú Principal</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- MODAL DE TABLA DE PUNTUACIONES E HISTORIAL -->
+  <div id="leaderboard-modal" class="modal-backdrop hidden" role="dialog" aria-modal="true" aria-labelledby="leaderboard-title">
+    <div class="modal-card leaderboard-card">
+      <header class="modal-header">
+        <div>
+          <h2 id="leaderboard-title">🏆 Tabla de Puntuaciones</h2>
+          <p class="modal-subtitle">Clasificación acumulada (3 pts por victoria) e historial local</p>
+        </div>
+        <button type="button" id="btn-close-leaderboard" class="close-modal-btn" aria-label="Cerrar tabla">✕</button>
+      </header>
+
+      <div class="modal-tabs" role="tablist">
+        <button type="button" id="tab-ranking" class="tab-btn active" role="tab" aria-selected="true">
+          Clasificación <span id="ranking-count" class="count-pill">0</span>
+        </button>
+        <button type="button" id="tab-history" class="tab-btn" role="tab" aria-selected="false">
+          Últimos Partidos <span id="history-count" class="count-pill">0</span>
+        </button>
+      </div>
+
+      <div class="modal-body">
+        <!-- Panel Clasificación -->
+        <div id="panel-ranking" class="tab-panel active">
+          <div class="table-scroll">
+            <table class="arcade-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Jugador</th>
+                  <th title="Partidos Jugados">PJ</th>
+                  <th title="Partidos Ganados">PG</th>
+                  <th title="Partidos Perdidos">PP</th>
+                  <th title="Goles a Favor">GF</th>
+                  <th title="Puntos Totales (3 por victoria)">PTS</th>
+                </tr>
+              </thead>
+              <tbody id="ranking-tbody"></tbody>
+            </table>
+          </div>
+          <p id="ranking-empty" class="empty-state hidden">
+            Aún no hay jugadores registrados. ¡Completa un partido para inaugurar la tabla!
+          </p>
+        </div>
+
+        <!-- Panel Historial -->
+        <div id="panel-history" class="tab-panel hidden">
+          <div class="table-scroll">
+            <table class="arcade-table history-table">
+              <thead>
+                <tr>
+                  <th>Fecha y Hora</th>
+                  <th>Marcador Final</th>
+                  <th>Ganador</th>
+                </tr>
+              </thead>
+              <tbody id="history-tbody"></tbody>
+            </table>
+          </div>
+          <p id="history-empty" class="empty-state hidden">
+            Todavía no hay partidos en el historial.
+          </p>
+        </div>
+      </div>
+
+      <footer class="modal-footer">
+        <div id="clear-data-area" class="clear-data-area">
+          <button type="button" id="btn-request-clear" class="btn btn-danger-outline">
+            🗑️ Borrar Datos Guardados
+          </button>
+        </div>
+        <div id="clear-confirm-area" class="clear-confirm-area hidden">
+          <span class="confirm-text">¿Eliminar todo el ranking e historial?</span>
+          <button type="button" id="btn-confirm-clear" class="btn btn-danger">Sí, borrar todo</button>
+          <button type="button" id="btn-cancel-clear" class="btn btn-ghost">Cancelar</button>
+        </div>
+        <button type="button" id="btn-leaderboard-done" class="btn btn-secondary">Cerrar</button>
+      </footer>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>La Habitación del Sonámbulo - Terror Psicológico 3D</title>
+  
+  <!-- Estilos del Juego -->
+  <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="css/ui.css">
+</head>
+<body>
+
+  <!-- Contenedor del Lienzo WebGL 3D -->
+  <div id="canvas-container"></div>
+
+  <!-- Capas de Atmósfera / Efectos Visuales VHS, Linterna & CRT -->
+  <div class="vignette-overlay"></div>
+  <div class="flashlight-vignette active"></div>
+  <div class="crt-scanlines"></div>
+  <div class="vhs-noise"></div>
+  <div class="eyelid eyelid-top"></div>
+  <div class="eyelid eyelid-bottom"></div>
+  <div class="sanity-distortion"></div>
+  <div class="flash-lucid"></div>
+
+  <!-- ================= INTERFAZ DIEGÉTICA (HUD) ================= -->
+  <div id="hud">
+    <!-- Monitor Superior -->
+    <div class="hud-top">
+      <!-- Izquierda: Lucidez y Batería de Linterna -->
+      <div class="hud-status-left">
+        <!-- Lucidez Cerebral -->
+        <div class="lucidity-monitor">
+          <div class="monitor-header">
+            <span class="monitor-label">LUCIDEZ CEREBRAL</span>
+            <span id="lucidity-value" class="lucidity-value">100%</span>
+          </div>
+          <div class="lucidity-bar-container">
+            <div id="lucidity-bar" class="lucidity-bar"></div>
+          </div>
+          <canvas id="ecg-canvas"></canvas>
+          <div class="monitor-status">
+            <span id="lucidity-status">ESTADO: ESTABLE</span>
+            <span>ONDAS THETA</span>
+          </div>
+        </div>
+
+        <!-- Batería de Linterna -->
+        <div class="battery-monitor">
+          <div class="battery-header">
+            <span class="battery-label">[F] LINTERNA</span>
+            <span id="battery-val" class="battery-value">100%</span>
+          </div>
+          <div class="battery-bar-container">
+            <div id="battery-bar" class="battery-bar"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centro: Tolerancia e Inmunidad del Demonio -->
+      <div class="demon-alert-hud">
+        <div class="demon-immune-badge">[¡EL DEMONIO SE HA ACOSTUMBRADO A LA LUZ! ¡INMUNE!]</div>
+        <div class="demon-tolerance-meter">
+          <span>TOLERANCIA A LA LUZ:</span>
+          <div class="demon-tolerance-bar-track">
+            <div class="demon-tolerance-bar-fill"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Derecha: Reloj y Habitación Actual -->
+      <div class="hud-status-right">
+        <div class="clock-display">
+          <div class="clock-title">TIEMPO TRANSCURRIDO</div>
+          <div id="clock-digits" class="clock-digits">12:00 AM</div>
+          <div class="clock-target">AMANECER: 06:00 AM</div>
+        </div>
+        <div id="room-locator" class="room-locator-badge">Dormitorio Principal</div>
+      </div>
+    </div>
+
+    <!-- Retícula Central Interactiva -->
+    <div class="crosshair-container">
+      <div class="crosshair-ring"></div>
+      <div class="crosshair-dot"></div>
+      <div id="interaction-prompt" class="interaction-prompt"></div>
+    </div>
+
+    <!-- Notificación Narrativa Diegética -->
+    <div id="narrative-toast" class="narrative-toast"></div>
+
+    <!-- Pie del HUD con Guía Rápida y Alerta de Pánico -->
+    <div class="hud-bottom">
+      <div class="hud-controls-help">
+        [W,A,S,D] Moverse &nbsp;|&nbsp; [Ratón] Mirar &nbsp;|&nbsp; [F] Linterna &nbsp;|&nbsp; [TAB] Tableta &nbsp;|&nbsp; [E] Interactuar &nbsp;|&nbsp; [ESPACIO] Enfoque
+      </div>
+      <div id="hud-warning" class="hud-warning">
+        [PELIGRO: PÉRDIDA CRÍTICA DE LUCIDEZ - FORZA EL ENFOQUE O COMPLETA TAREAS]
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= TABLETA DE TAREAS / NEURO-MONITOR SOMNO-PAD (TAB) ================= -->
+  <div id="tablet-modal">
+    <div class="tablet-case">
+      <div class="tablet-screen-header">
+        <div class="tablet-title">NEURO-MONITOR SOMNO-PAD v2.4 // TAREAS DE ANCLAJE</div>
+        <div class="tablet-meta">[PULSA TAB O ESC PARA CERRAR]</div>
+      </div>
+      <div class="tablet-tasks-grid">
+        <!-- Rellenado dinámicamente por MinigamesManager -->
+      </div>
+      <div class="tablet-footer">
+        <span>* El tiempo de enfriamiento aumenta progresivamente tras cada realización.</span>
+        <button id="tablet-close-btn" class="retro-btn">CERRAR TABLETA [TAB]</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 1: PARPADEO / ENFOQUE BIOLÓGICO ================= -->
+  <div id="minigame-focus">
+    <div class="focus-reticle">
+      <div class="focus-ring-outer"></div>
+      <div class="focus-ring-target"></div>
+      <div class="focus-core"></div>
+    </div>
+    <div class="focus-status-box">
+      <div class="focus-text">VISIÓN BORROSA: MANTÉN [ESPACIO] O CLICK PARA ENFOCAR</div>
+      <div class="focus-progress-track">
+        <div class="focus-progress-fill"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 2: RELOJ INVERTIDO ================= -->
+  <div id="modal-reloj" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">SINCRONIZACIÓN COGNITIVA</h2>
+      <div class="minigame-subtitle">DISTORSIÓN ONÍRICA: CONTROLES ESPACIALES INVERTIDOS</div>
+      <div class="clock-mechanism">
+        <div class="clock-target-zone"></div>
+        <div class="clock-hand clock-hand-hour"></div>
+        <div class="clock-hand clock-hand-minute"></div>
+        <div class="clock-center-pin"></div>
+      </div>
+      <div id="clock-puzzle-status" style="margin-bottom: 15px; font-size: 11px; color: #ff9f43;">
+        ALINEA LA AGUJA CON LA ZONA VERDE
+      </div>
+      <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
+        <button id="clock-turn-left" class="retro-btn">◄ GIRAR (IZQ)</button>
+        <button id="clock-turn-right" class="retro-btn">GIRAR (DER) ►</button>
+      </div>
+      <button id="clock-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 3: LAVAMANOS (AGUA FRÍA) ================= -->
+  <div id="modal-lavamanos" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">LAVARSE LA CARA (AGUA FRÍA)</h2>
+      <div class="minigame-subtitle">GOLPEA AGUA HELADA EN TU ROSTRO PARA DISIPAR EL COMA</div>
+      <div class="sink-splash-container">
+        <div class="sink-water-wave"></div>
+        <button id="sink-splash-btn" class="splash-click-btn">¡SALPICAR AGUA!</button>
+      </div>
+      <div id="sink-status-text" style="margin-bottom: 15px; font-size: 12px; color: #74b9ff;">
+        SALPICADAS: 0 / 6
+      </div>
+      <button id="sink-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 4: DESEMPAÑAR ESPEJO ================= -->
+  <div id="modal-espejo" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">DESEMPAÑAR ESPEJO MANCHADO</h2>
+      <div class="minigame-subtitle">ARRASTRA EL RATÓN EN CÍRCULOS SOBRE EL ESPEJO PARA LIMPIAR EL VAPOR</div>
+      <div class="mirror-canvas-container">
+        <canvas id="mirror-canvas"></canvas>
+      </div>
+      <div style="margin-bottom: 15px; font-size: 11px; color: #a4b0be;">
+        Mueve el cursor frotando el cristal para recuperar tu reflejo
+      </div>
+      <button id="mirror-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 5: TETERA / INFUSIÓN ================= -->
+  <div id="modal-tetera" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">HERVIR INFUSIÓN DE CAFEÍNA</h2>
+      <div class="minigame-subtitle">REGULA EL FUEGO PARA MANTENER LA PRESIÓN EN LA ZONA VERDE</div>
+      <div class="kettle-meter-container">
+        <div class="kettle-pressure-track">
+          <div class="kettle-sweet-spot"></div>
+          <div class="kettle-needle-indicator"></div>
+        </div>
+      </div>
+      <div id="kettle-status-text" style="margin-bottom: 15px; font-size: 11px; color: #ffa502;">
+        MANTÉN LA AGUJA DENTRO DE LA ZONA VERDE
+      </div>
+      <button id="kettle-heat-btn" class="retro-btn" style="margin-bottom: 12px;">+ BOMBEAR GAS / CALOR</button>
+      <div><button id="kettle-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button></div>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 6: CERRAR FUGA DE TUBERÍA ================= -->
+  <div id="modal-tuberia" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">CERRAR FUGA DE TUBERÍA</h2>
+      <div class="minigame-subtitle">PRESIONA LA LLAVE CUANDO EL CURSOR CRUCE LA ZONA AZUL</div>
+      <div class="pipe-leak-meter">
+        <div class="pipe-target-zone"></div>
+        <div class="pipe-cursor"></div>
+      </div>
+      <div id="pipe-status-text" style="margin-bottom: 15px; font-size: 11px; color: #3498db;">
+        SINCRONIZA EL APRIETE
+      </div>
+      <button id="pipe-tighten-btn" class="retro-btn" style="margin-bottom: 12px;">¡APRETAR VÁLVULA!</button>
+      <div><button id="pipe-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button></div>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 7: SINTONIZAR TV CRT ================= -->
+  <div id="modal-television" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">SINTONIZAR FRECUENCIA DE TV CRT</h2>
+      <div class="minigame-subtitle">MUEVE EL DIAL HASTA ENCONTRAR LA EMISIÓN LÚCIDA (74 MHz)</div>
+      <div class="tv-screen-box">
+        <canvas id="tv-static-canvas"></canvas>
+      </div>
+      <input type="range" id="tv-tuner-slider" class="tv-tuner-slider" min="10" max="120" value="30">
+      <div id="tv-status-text" style="margin-bottom: 15px; font-size: 11px; color: #00d2d3;">
+        SINTONIZANDO...
+      </div>
+      <button id="tv-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 8: REBOBINAR CASETE ================= -->
+  <div id="modal-casete" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">REBOBINAR CASETE DE GRABADORA</h2>
+      <div class="minigame-subtitle">HAZ CLIC CONTINUAMENTE PARA GIRAR LOS CARRETES MAGNÉTICOS</div>
+      <div class="cassette-box">
+        <div class="tape-reel"><div class="tape-reel-center"></div></div>
+        <div class="tape-reel"><div class="tape-reel-center"></div></div>
+      </div>
+      <div id="tape-status-text" style="margin-bottom: 15px; font-size: 11px; color: #a4b0be;">
+        REBOBINADO: 0%
+      </div>
+      <button id="tape-spin-btn" class="retro-btn" style="margin-bottom: 12px;">GIRAR BOBINA</button>
+      <div><button id="tape-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button></div>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 9: MÁQUINA DE ESCRIBIR ================= -->
+  <div id="modal-maquinilla" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">MÁQUINA DE ESCRIBIR (ANCLAJE MENTAL)</h2>
+      <div class="minigame-subtitle">ESCRIBE LA PALABRA DE AFIRMACIÓN: <strong>DESPIERTA</strong></div>
+      <div id="typewriter-typed" class="typewriter-display">...</div>
+      <div class="typewriter-keypad"></div>
+      <button id="typewriter-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= MINIJUEGO 10: CAJA DE FUSIBLES ================= -->
+  <div id="modal-fusibles" class="minigame-modal-backdrop">
+    <div class="minigame-card">
+      <h2 class="minigame-title">RESTABLECER CAJA DE FUSIBLES</h2>
+      <div class="minigame-subtitle">SUBE LOS 4 INTERRUPTORES TÉRMICOS PARA RESTABLECER LA ENERGÍA</div>
+      <div class="fusebox-switches-row">
+        <div class="fuse-switch"><div class="fuse-toggle-handle"></div></div>
+        <div class="fuse-switch"><div class="fuse-toggle-handle"></div></div>
+        <div class="fuse-switch"><div class="fuse-toggle-handle"></div></div>
+        <div class="fuse-switch"><div class="fuse-toggle-handle"></div></div>
+      </div>
+      <div style="margin-bottom: 15px; font-size: 11px; color: #2ed573;">
+        Recarga +40% Batería de Linterna y +32% Lucidez
+      </div>
+      <button id="fusebox-exit-btn" class="retro-btn retro-btn-danger">[ESC] CERRAR</button>
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA DE INICIO (AUDIO UNLOCK) ================= -->
+  <div id="start-screen" class="overlay-screen">
+    <div class="screen-card">
+      <div class="card-glitch-border"></div>
+      <h1 class="screen-title">La Habitación del Sonámbulo</h1>
+      <div class="screen-subtitle">EXPERIMENTO 404: PROTOCOLO DE PARÁLISIS Y CASA DEL TERROR</div>
+      
+      <p class="screen-desc">
+        Estás atrapado en una pesadilla lúcida dentro de una casa abandonada. Tu mente se disipa velozmente 
+        mientras el <strong>Demonio del Sueño</strong> acecha por las habitaciones. Explora las estancias, 
+        mantén cargada tu linterna y realiza las 10 tareas de anclaje para resistir hasta el amanecer (06:00 AM).
+      </p>
+
+      <div class="screen-instructions">
+        <strong>GUÍA DE SUPERVIVENCIA:</strong>
+        <ul>
+          <li><strong>La Linterna [F]:</strong> Consume batería. Ahuyenta al demonio si lo alumbras de frente.</li>
+          <li><strong>Inmunidad del Demonio:</strong> Si alumbras al demonio varias veces consecutivas, se acostumbrará a la luz y se volverá <strong>INMUNE</strong>. ¡Úsala con sabiduría!</li>
+          <li><strong>Tableta de Tareas [TAB]:</strong> Muestra los 10 minijuegos distribuidos en la casa, su estado y ubicación.</li>
+          <li><strong>Enfriamiento Progresivo:</strong> Cada vez que realices una tarea, entrará en enfriamiento y será más demorada de volver a realizar.</li>
+          <li><strong>Lucidez Acelerada:</strong> La barra decae rápidamente; estar en la oscuridad o cerca del demonio acelera el colapso.</li>
+        </ul>
+      </div>
+
+      <button id="start-btn" class="start-btn">INICIAR EXPERIMENTO</button>
+      <div style="margin-top: 14px; text-align: center;">
+        <a href="../../index.html#videojuegos" style="color: #2ed573; text-decoration: none; font-size: 13px; font-family: monospace; border: 1px solid rgba(46, 213, 115, 0.4); padding: 7px 16px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.6); transition: all 0.2s;">← VOLVER AL PORTAFOLIO</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA DE DERROTA ================= -->
+  <div id="defeat-screen" class="overlay-screen hidden">
+    <div class="screen-card">
+      <div class="card-glitch-border" style="background: #ff4757;"></div>
+      <h1 class="screen-title">PÉRDIDA DE LUCIDEZ</h1>
+      <div class="screen-subtitle">HAS CAÍDO EN UN COMA ONÍRICO PROFUNDO</div>
+
+      <p class="screen-desc">
+        Tus ondas cerebrales se han aplanado. El Demonio del Sueño ha quebrado tu anclaje con la realidad.
+      </p>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-label">HORA ALCANZADA</span>
+          <span id="defeat-time-survived" class="stat-val">03:45 AM</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">CAUSA</span>
+          <span class="stat-val" style="color: #ff4757;">COLAPSO COGNITIVO</span>
+        </div>
+      </div>
+
+      <button id="defeat-restart-btn" class="start-btn">REINTENTAR SUEÑO</button>
+      <div style="margin-top: 14px; text-align: center;">
+        <a href="../../index.html#videojuegos" style="color: #ff4757; text-decoration: none; font-size: 13px; font-family: monospace; border: 1px solid rgba(255, 71, 87, 0.4); padding: 7px 16px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.6); transition: all 0.2s;">← VOLVER AL PORTAFOLIO</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ================= PANTALLA DE VICTORIA ================= -->
+  <div id="victory-screen" class="overlay-screen hidden">
+    <div class="screen-card">
+      <div class="card-glitch-border"></div>
+      <h1 class="screen-title">06:00 AM - HAS DESPERTADO</h1>
+      <div class="screen-subtitle" style="color: #2ed573;">EL AMANECER HA DISIPADO LA PESADILLA</div>
+
+      <p class="screen-desc">
+        La luz matinal inunda toda la casa. El demonio se disuelve y tu cuerpo despierta de la parálisis.
+      </p>
+
+      <div class="stats-row">
+        <div class="stat-item">
+          <span class="stat-label">LUCIDEZ FINAL</span>
+          <span id="victory-final-lucidity" class="stat-val" style="color: #2ed573;">75%</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-label">ESTADO CLÍNICO</span>
+          <span class="stat-val" style="color: #2ed573;">VIGILIA RESTAURADA</span>
+        </div>
+      </div>
+
+      <button id="victory-restart-btn" class="start-btn" style="background: #2ed573; box-shadow: 0 0 20px rgba(46, 213, 115, 0.6);">VOLVER A DORMIR</button>
+      <div style="margin-top: 14px; text-align: center;">
+        <a href="../../index.html#videojuegos" style="color: #2ed573; text-decoration: none; font-size: 13px; font-family: monospace; border: 1px solid rgba(46, 213, 115, 0.4); padding: 7px 16px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.6); transition: all 0.2s;">← VOLVER AL PORTAFOLIO</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- Librería Three.js (CDN Oficial) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+
+  <!-- Módulos del Videojuego -->
+  <script src="js/textures.js"></script>
+  <script src="js/audio.js"></script>
+  <script src="js/entity.js"></script>
+  <script src="js/controls.js"></script>
+  <script src="js/scene.js"></script>
+  <script src="js/minigames.js"></script>
+  <script src="js/game.js"></script>
+  <script src="js/main.js"></script>
+</body>
+</html>

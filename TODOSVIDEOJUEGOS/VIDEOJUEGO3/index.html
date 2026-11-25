@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Cazas Galácticos - Galactic Starfighter 2D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&family=Rajdhani:wght@500;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="game-container">
+    <!-- Lienzo del Juego -->
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- HUD (Interfaz en tiempo real) -->
+    <div id="hud" class="hud hidden">
+      <!-- Estadísticas de Jugador (Izquierda) -->
+      <div class="hud-left">
+        <div class="bar-container">
+          <span class="bar-label">ESCUDO</span>
+          <div class="bar-wrapper">
+            <div id="shield-bar" class="bar shield-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="bar-container">
+          <span class="bar-label">CASCO</span>
+          <div class="bar-wrapper">
+            <div id="health-bar" class="bar health-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+        <div class="bar-container">
+          <span class="bar-label">TURBO</span>
+          <div class="bar-wrapper">
+            <div id="energy-bar" class="bar energy-fill" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Centro: Oleada, Puntuación y Combo -->
+      <div class="hud-center">
+        <div id="wave-display" class="wave-tag">OLEADA 1</div>
+        <div id="score-display" class="score-tag">000000</div>
+        <div id="combo-display" class="combo-tag"></div>
+      </div>
+
+      <!-- Derecha: Bombas, Nivel de Arma y Controles rápidos -->
+      <div class="hud-right">
+        <div class="weapon-info">
+          <span class="info-label">ARMA:</span>
+          <span id="weapon-level-text" class="info-value">NIVEL 1</span>
+        </div>
+        <div class="bombs-display">
+          <span class="info-label">BOMBAS:</span>
+          <div id="bomb-icons" class="bomb-icons-row">
+            <span class="bomb-icon">💣</span>
+            <span class="bomb-icon">💣</span>
+            <span class="bomb-icon">💣</span>
+          </div>
+        </div>
+        <div class="hud-actions">
+          <button id="btn-audio" class="hud-btn" title="Silenciar / Activar sonido">🔊</button>
+          <button id="btn-pause" class="hud-btn" title="Pausar">⏸️</button>
+        </div>
+      </div>
+
+      <!-- Barra de Vida del Jefe (aparece solo en batallas de Jefe) -->
+      <div id="boss-hud" class="boss-hud hidden">
+        <div class="boss-name" id="boss-name">DREADNOUGHT GALÁCTICO</div>
+        <div class="boss-bar-wrapper">
+          <div id="boss-health-bar" class="boss-bar-fill" style="width: 100%;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pantalla de Inicio -->
+    <div id="screen-start" class="screen-overlay active">
+      <div class="screen-box">
+        <div class="game-badge">SCI-FI ARCADE SHOOTER 2D</div>
+        <h1 class="game-title">CAZAS<br><span class="highlight">GALÁCTICOS</span></h1>
+        <p class="game-subtitle">Pilota tu caza estelar de vanguardia y defiende la galaxia de la armada invasora.</p>
+
+        <!-- Selector de Estilo de Nave -->
+        <div class="ship-select-area">
+          <div class="ship-select-title">ELIGE TU CAZA ESTELAR:</div>
+          <div class="ship-options">
+            <button class="ship-opt active" data-ship="interceptor">
+              <span class="ship-name">AURORA X-1</span>
+              <span class="ship-desc">Equilibrado • Cañones Láser Gemelos</span>
+            </button>
+            <button class="ship-opt" data-ship="phantom">
+              <span class="ship-name">ESPECTRO V</span>
+              <span class="ship-desc">Rápido • Alta Maniobrabilidad</span>
+            </button>
+            <button class="ship-opt" data-ship="titan">
+              <span class="ship-name">TITÁN MK-II</span>
+              <span class="ship-desc">Blindado • Mayor Escudo Inicial</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Guía de Controles -->
+        <div class="controls-guide">
+          <div class="ctrl-row"><span>🕹️ Moverse:</span> <strong>WASD / Flechas / Ratón</strong></div>
+          <div class="ctrl-row"><span>🔥 Disparar:</span> <strong>Espacio / Clic Izquierdo</strong></div>
+          <div class="ctrl-row"><span>⚡ Esquivar (Turbo):</span> <strong>Shift / Clic Derecho</strong></div>
+          <div class="ctrl-row"><span>💥 Bomba Nova:</span> <strong>Tecla B / Doble Clic</strong></div>
+        </div>
+
+        <button id="btn-start" class="btn-primary">DESPEGAR A LA BATALLA</button>
+        <div style="margin-top: 12px; text-align: center;">
+          <a href="../../index.html#videojuegos" style="color: #00c6ff; text-decoration: none; font-size: 13px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; border: 1px solid rgba(0, 198, 255, 0.4); padding: 6px 14px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.5);">← REGRESAR AL PORTAFOLIO</a>
+        </div>
+        <div class="highscore-start" style="margin-top: 10px;">RÉCORD MUNDIAL: <span id="start-highscore">0</span> PTS</div>
+      </div>
+    </div>
+
+    <!-- Pantalla de Pausa -->
+    <div id="screen-pause" class="screen-overlay hidden">
+      <div class="screen-box compact">
+        <h2 class="screen-title">MISIÓN EN PAUSA</h2>
+        <p>Sistemas del caza en espera táctica.</p>
+        <div class="btn-group">
+          <button id="btn-resume" class="btn-primary">REANUDAR</button>
+          <button id="btn-restart-pause" class="btn-secondary">REINICIAR</button>
+        </div>
+        <div style="margin-top: 12px; text-align: center;">
+          <a href="../../index.html#videojuegos" style="color: #00c6ff; text-decoration: none; font-size: 13px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; border: 1px solid rgba(0, 198, 255, 0.4); padding: 6px 14px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.5);">← REGRESAR AL PORTAFOLIO</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Pantalla de Game Over -->
+    <div id="screen-gameover" class="screen-overlay hidden">
+      <div class="screen-box">
+        <div class="game-badge alert">SEÑAL PERDIDA</div>
+        <h2 class="screen-title-lost">CAZA DESTRUIDO</h2>
+        
+        <div class="gameover-stats">
+          <div class="stat-item">
+            <span class="stat-label">PUNTUACIÓN FINAL</span>
+            <span id="final-score" class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">OLEADA ALCANZADA</span>
+            <span id="final-wave" class="stat-value">1</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">ENEMIGOS ELIMINADOS</span>
+            <span id="final-kills" class="stat-value">0</span>
+          </div>
+          <div class="stat-item">
+            <span class="stat-label">RÉCORD PERSONAL</span>
+            <span id="final-highscore" class="stat-value highlight">0</span>
+          </div>
+        </div>
+
+        <div id="new-record-badge" class="new-record hidden">¡NUEVO RÉCORD ESTABLECIDO! 🏆</div>
+
+        <button id="btn-restart" class="btn-primary">VOLVER AL COMBATE</button>
+        <div style="margin-top: 12px; text-align: center;">
+          <a href="../../index.html#videojuegos" style="color: #00c6ff; text-decoration: none; font-size: 13px; font-family: 'Rajdhani', sans-serif; letter-spacing: 1px; border: 1px solid rgba(0, 198, 255, 0.4); padding: 6px 14px; border-radius: 4px; display: inline-block; background: rgba(0,0,0,0.5);">← REGRESAR AL PORTAFOLIO</a>
+        </div>
+      </div>
+    </div>
+
+    <!-- Banner Flotante de Anuncios (Alertas de oleada, jefes, combos) -->
+    <div id="wave-banner" class="wave-banner hidden">
+      <h2 id="banner-title">OLEADA 1</h2>
+      <p id="banner-sub">¡ENEMIGOS APROXIMÁNDOSE!</p>
+    </div>
+
+    <!-- Controles Táctiles para Móviles / Tablets -->
+    <div id="mobile-controls" class="mobile-controls hidden">
+      <button id="btn-mobile-bomb" class="mobile-action-btn bomb-btn">💣</button>
+      <button id="btn-mobile-dash" class="mobile-action-btn dash-btn">⚡</button>
+      <button id="btn-mobile-fire" class="mobile-action-btn fire-btn">🔥</button>
+    </div>
+  </div>
+
+  <script src="game.js"></script>
+</body>
+</html>

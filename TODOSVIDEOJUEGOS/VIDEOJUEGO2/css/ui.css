@@ -1,0 +1,1175 @@
+/* ==========================================================================
+   LA HABITACIÓN DEL SONÁMBULO - UI, TABLET, BATTERY & 10 MINIGAMES
+   ========================================================================== */
+
+/* ================= HUD SUPERIOR ================= */
+#hud {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 20px 28px;
+}
+
+.hud-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  width: 100%;
+  gap: 16px;
+}
+
+/* Panel Izquierdo: Lucidez Cerebral + Batería de Linterna */
+.hud-status-left {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.lucidity-monitor {
+  background: rgba(6, 10, 14, 0.88);
+  border: 1px solid rgba(0, 255, 136, 0.4);
+  box-shadow: 0 0 16px rgba(0, 255, 136, 0.15), inset 0 0 12px rgba(0, 0, 0, 0.85);
+  padding: 10px 16px;
+  border-radius: 4px;
+  min-width: 250px;
+  backdrop-filter: blur(5px);
+}
+
+.monitor-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 5px;
+}
+
+.monitor-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #55efc4;
+  text-transform: uppercase;
+}
+
+.lucidity-value {
+  font-size: 18px;
+  font-weight: bold;
+  color: #00ff88;
+  text-shadow: 0 0 8px rgba(0, 255, 136, 0.7);
+}
+
+.lucidity-bar-container {
+  width: 100%;
+  height: 9px;
+  background: #0f191d;
+  border: 1px solid #1a3837;
+  border-radius: 2px;
+  overflow: hidden;
+  position: relative;
+  margin-bottom: 6px;
+}
+
+.lucidity-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #ff1744 0%, #ff9100 45%, #00ff88 100%);
+  transition: width 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 0 10px rgba(0, 255, 136, 0.6);
+}
+
+#ecg-canvas {
+  width: 100%;
+  height: 24px;
+  background: #030608;
+  border: 1px solid rgba(0, 255, 136, 0.2);
+  display: block;
+}
+
+.monitor-status {
+  font-size: 9px;
+  letter-spacing: 1.5px;
+  margin-top: 5px;
+  color: #81ecec;
+  display: flex;
+  justify-content: space-between;
+}
+
+/* Indicador de Batería de Linterna */
+.battery-monitor {
+  background: rgba(6, 10, 14, 0.85);
+  border: 1px solid rgba(255, 230, 0, 0.35);
+  box-shadow: 0 0 12px rgba(255, 230, 0, 0.12), inset 0 0 10px rgba(0,0,0,0.8);
+  padding: 8px 14px;
+  border-radius: 4px;
+  backdrop-filter: blur(4px);
+  min-width: 200px;
+}
+
+.battery-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.battery-label {
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #fed330;
+}
+
+.battery-value {
+  font-size: 13px;
+  font-weight: bold;
+  color: #fed330;
+  text-shadow: 0 0 6px rgba(254, 211, 48, 0.7);
+}
+
+.battery-bar-container {
+  width: 100%;
+  height: 6px;
+  background: #17170c;
+  border: 1px solid #3d3b14;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.battery-bar {
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, #eb3b5a, #fed330, #26de81);
+  transition: width 0.25s linear;
+}
+
+/* Panel Centro: Alerta de Adaptación e Inmunidad del Demonio */
+.demon-alert-hud {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.demon-immune-badge {
+  background: rgba(255, 0, 0, 0.85);
+  border: 1px solid #ff0055;
+  box-shadow: 0 0 25px #ff0000;
+  color: #ffffff;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 6px 16px;
+  border-radius: 3px;
+  font-weight: bold;
+  text-transform: uppercase;
+  animation: panicFlash 0.3s infinite alternate;
+  display: none;
+}
+
+@keyframes panicFlash {
+  0% { transform: scale(1); opacity: 0.8; }
+  100% { transform: scale(1.08); opacity: 1; }
+}
+
+.demon-tolerance-meter {
+  background: rgba(10, 4, 15, 0.85);
+  border: 1px solid #9b59b6;
+  padding: 4px 10px;
+  border-radius: 3px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 9px;
+  color: #d1d8e0;
+  letter-spacing: 1.5px;
+}
+
+.demon-tolerance-bar-track {
+  width: 90px;
+  height: 5px;
+  background: #190924;
+  border: 1px solid #57207a;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.demon-tolerance-bar-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #9b59b6, #e74c3c);
+  transition: width 0.2s ease;
+}
+
+/* Panel Derecho: Reloj Nocturno y Ubicación de Habitación */
+.hud-status-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 8px;
+}
+
+.clock-display {
+  background: rgba(6, 10, 14, 0.88);
+  border: 1px solid rgba(255, 177, 66, 0.45);
+  box-shadow: 0 0 16px rgba(255, 177, 66, 0.18), inset 0 0 10px rgba(0, 0, 0, 0.85);
+  padding: 10px 18px;
+  border-radius: 4px;
+  text-align: right;
+  backdrop-filter: blur(5px);
+}
+
+.clock-title {
+  font-size: 9px;
+  letter-spacing: 2px;
+  color: #eccc68;
+  margin-bottom: 2px;
+}
+
+.clock-digits {
+  font-size: 24px;
+  font-weight: bold;
+  color: #ffaa00;
+  text-shadow: 0 0 10px rgba(255, 170, 0, 0.8);
+  letter-spacing: 2px;
+}
+
+.clock-target {
+  font-size: 9px;
+  color: #747d8c;
+  letter-spacing: 1px;
+}
+
+.room-locator-badge {
+  background: rgba(12, 16, 24, 0.85);
+  border: 1px solid #4b6584;
+  padding: 5px 12px;
+  border-radius: 3px;
+  font-size: 10px;
+  letter-spacing: 2px;
+  color: #a5b1c2;
+  text-transform: uppercase;
+}
+
+/* ================= RETÍCULA / PUNTERO ================= */
+.crosshair-container {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+  z-index: 25;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.crosshair-dot {
+  width: 5px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 50%;
+  box-shadow: 0 0 6px rgba(255, 255, 255, 0.9);
+  transition: all 0.2s ease;
+}
+
+.crosshair-ring {
+  position: absolute;
+  width: 22px;
+  height: 22px;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.crosshair-container.interactive .crosshair-dot {
+  background: #ffaa00;
+  box-shadow: 0 0 10px #ffaa00;
+  transform: scale(1.5);
+}
+
+.crosshair-container.interactive .crosshair-ring {
+  width: 34px;
+  height: 34px;
+  border-color: #ffaa00;
+  box-shadow: 0 0 10px rgba(255, 170, 0, 0.6);
+  animation: pulseCrosshair 0.8s infinite alternate;
+}
+
+@keyframes pulseCrosshair {
+  0% { transform: scale(1); opacity: 0.6; }
+  100% { transform: scale(1.15); opacity: 1; }
+}
+
+.interaction-prompt {
+  margin-top: 20px;
+  font-size: 12px;
+  letter-spacing: 1.5px;
+  color: #fffa65;
+  background: rgba(2, 4, 8, 0.9);
+  padding: 6px 14px;
+  border: 1px solid rgba(255, 250, 101, 0.45);
+  border-radius: 3px;
+  text-shadow: 0 0 6px rgba(255, 250, 101, 0.8);
+  opacity: 0;
+  transition: opacity 0.2s ease;
+  white-space: nowrap;
+}
+
+.interaction-prompt.visible {
+  opacity: 1;
+}
+
+.narrative-toast {
+  position: fixed;
+  bottom: 75px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: rgba(8, 12, 18, 0.95);
+  border: 1px solid #e67e22;
+  color: #f1f2f6;
+  font-size: 12px;
+  padding: 10px 22px;
+  border-radius: 4px;
+  letter-spacing: 1.5px;
+  box-shadow: 0 0 25px rgba(230, 126, 34, 0.5);
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  z-index: 40;
+  max-width: 85%;
+  text-align: center;
+}
+
+.narrative-toast.visible {
+  opacity: 1;
+}
+
+/* Pie del HUD */
+.hud-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: #747d8c;
+  font-size: 10px;
+  letter-spacing: 1px;
+}
+
+.hud-controls-help {
+  background: rgba(4, 6, 9, 0.75);
+  padding: 8px 14px;
+  border-radius: 4px;
+  border-left: 2px solid #576574;
+}
+
+.hud-warning {
+  color: #ff4757;
+  font-weight: bold;
+  letter-spacing: 2px;
+  text-shadow: 0 0 8px rgba(255, 71, 87, 0.7);
+  animation: warnBlink 1s infinite;
+  display: none;
+}
+
+@keyframes warnBlink {
+  0%, 100% { opacity: 0.3; }
+  50% { opacity: 1; }
+}
+
+/* ================= TABLETA DE TAREAS / NEURO-MONITOR (TAB) ================= */
+#tablet-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 4, 8, 0.88);
+  backdrop-filter: blur(8px);
+  z-index: 45;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+#tablet-modal.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.tablet-case {
+  width: 900px;
+  max-width: 95%;
+  height: 560px;
+  max-height: 90vh;
+  background: #0f151c;
+  border: 4px solid #2f3640;
+  border-radius: 12px;
+  box-shadow: 0 0 40px rgba(0, 0, 0, 0.95), inset 0 0 20px #000000;
+  display: flex;
+  flex-direction: column;
+  padding: 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.tablet-screen-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 2px solid #00d2d3;
+  padding-bottom: 12px;
+  margin-bottom: 16px;
+}
+
+.tablet-title {
+  color: #00d2d3;
+  font-size: 15px;
+  letter-spacing: 3px;
+  text-transform: uppercase;
+}
+
+.tablet-meta {
+  font-size: 11px;
+  color: #8395a7;
+  letter-spacing: 1.5px;
+}
+
+.tablet-tasks-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+  overflow-y: auto;
+  padding-right: 6px;
+  flex-grow: 1;
+}
+
+.tablet-task-card {
+  background: rgba(16, 23, 32, 0.9);
+  border: 1px solid #2c3e50;
+  border-radius: 6px;
+  padding: 10px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  transition: all 0.2s ease;
+}
+
+.tablet-task-card.available {
+  border-color: #2ed573;
+  box-shadow: 0 0 10px rgba(46, 213, 115, 0.15);
+}
+
+.tablet-task-card.cooldown {
+  opacity: 0.65;
+  border-color: #e74c3c;
+}
+
+.task-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 6px;
+}
+
+.task-name {
+  font-size: 12px;
+  color: #f1f2f6;
+  font-weight: bold;
+  letter-spacing: 1px;
+}
+
+.task-room {
+  font-size: 9px;
+  color: #ffa502;
+  letter-spacing: 1.5px;
+  background: rgba(255, 165, 2, 0.12);
+  padding: 2px 6px;
+  border-radius: 3px;
+  border: 1px solid rgba(255, 165, 2, 0.3);
+}
+
+.task-desc {
+  font-size: 10px;
+  color: #a4b0be;
+  line-height: 1.4;
+  margin-bottom: 8px;
+}
+
+.task-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+}
+
+.task-status-tag {
+  letter-spacing: 1px;
+  font-weight: bold;
+}
+
+.status-avail { color: #2ed573; }
+.status-wait { color: #e74c3c; }
+
+.task-completions {
+  color: #747d8c;
+}
+
+.tablet-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 14px;
+  border-top: 1px solid #222f3e;
+  padding-top: 10px;
+  font-size: 11px;
+  color: #718093;
+}
+
+/* ================= MODALES DE LOS 10 MINIJUEGOS ================= */
+.minigame-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(3, 5, 9, 0.92);
+  backdrop-filter: blur(8px);
+  z-index: 35;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.3s ease;
+}
+
+.minigame-modal-backdrop.active {
+  opacity: 1;
+  pointer-events: all;
+}
+
+.minigame-card {
+  background: #0d121a;
+  border: 2px solid #4b6584;
+  box-shadow: 0 0 35px rgba(0, 0, 0, 0.95), inset 0 0 20px #000;
+  border-radius: 8px;
+  padding: 28px;
+  text-align: center;
+  max-width: 520px;
+  width: 92%;
+  position: relative;
+}
+
+.minigame-title {
+  color: #00d2d3;
+  font-size: 16px;
+  letter-spacing: 3px;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.minigame-subtitle {
+  font-size: 11px;
+  color: #a4b0be;
+  letter-spacing: 1.5px;
+  margin-bottom: 20px;
+}
+
+/* Estilos de Botones Retro */
+.retro-btn {
+  background: #1e272e;
+  border: 1px solid #485460;
+  color: #d2dae2;
+  font-family: inherit;
+  font-size: 11px;
+  letter-spacing: 2px;
+  padding: 10px 18px;
+  border-radius: 3px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  pointer-events: all;
+}
+
+.retro-btn:hover {
+  background: #2f3640;
+  color: #ffffff;
+  border-color: #00d2d3;
+  box-shadow: 0 0 10px rgba(0, 210, 211, 0.4);
+}
+
+.retro-btn-danger {
+  border-color: #ff4757;
+  color: #ff6b81;
+}
+
+.retro-btn-danger:hover {
+  border-color: #ff4757;
+  box-shadow: 0 0 10px rgba(255, 71, 87, 0.5);
+}
+
+/* ================= 1. ENFOQUE BIOLÓGICO ================= */
+#minigame-focus {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
+  z-index: 30;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+#minigame-focus.active {
+  opacity: 1;
+}
+
+.focus-reticle {
+  position: relative;
+  width: 160px;
+  height: 160px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.focus-core {
+  width: 20px;
+  height: 20px;
+  background: #00ffff;
+  border-radius: 50%;
+  box-shadow: 0 0 25px #00ffff;
+  animation: corePulse 1s ease-in-out infinite alternate;
+}
+
+.focus-ring-outer {
+  position: absolute;
+  width: 130px;
+  height: 130px;
+  border: 2px dashed rgba(0, 255, 255, 0.6);
+  border-radius: 50%;
+  animation: rotateOuter 6s linear infinite;
+}
+
+.focus-ring-target {
+  position: absolute;
+  width: 65px;
+  height: 65px;
+  border: 2px solid #ff0055;
+  border-radius: 50%;
+  box-shadow: 0 0 10px rgba(255, 0, 85, 0.5);
+}
+
+@keyframes corePulse {
+  0% { transform: scale(0.8); opacity: 0.7; }
+  100% { transform: scale(1.2); opacity: 1; }
+}
+
+@keyframes rotateOuter {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.focus-status-box {
+  margin-top: 30px;
+  text-align: center;
+  background: rgba(5, 5, 10, 0.88);
+  border: 1px solid rgba(0, 255, 255, 0.3);
+  padding: 10px 22px;
+  border-radius: 4px;
+}
+
+.focus-text {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #81ecec;
+  margin-bottom: 8px;
+}
+
+.focus-progress-track {
+  width: 200px;
+  height: 8px;
+  background: #111;
+  border: 1px solid #00ffff;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.focus-progress-fill {
+  width: 0%;
+  height: 100%;
+  background: linear-gradient(90deg, #00cec9, #55efc4);
+  box-shadow: 0 0 10px #55efc4;
+}
+
+/* ================= 2. RELOJ DE PARED (INVERTIDO) ================= */
+.clock-mechanism {
+  width: 220px;
+  height: 220px;
+  margin: 0 auto 20px auto;
+  border: 8px solid #4a2f1c;
+  border-radius: 50%;
+  background: radial-gradient(circle, #f5f0d5 60%, #b89767 100%);
+  position: relative;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+.clock-center-pin {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background: #111;
+  border: 2px solid #e67e22;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 10;
+}
+
+.clock-hand {
+  position: absolute;
+  bottom: 50%;
+  left: 50%;
+  transform-origin: bottom center;
+  border-radius: 4px 4px 0 0;
+}
+
+.clock-hand-hour {
+  width: 6px;
+  height: 55px;
+  background: #222;
+  margin-left: -3px;
+  z-index: 5;
+}
+
+.clock-hand-minute {
+  width: 4px;
+  height: 80px;
+  background: #b33939;
+  margin-left: -2px;
+  z-index: 6;
+}
+
+.clock-target-zone {
+  position: absolute;
+  top: 10px;
+  left: 50%;
+  width: 30px;
+  height: 30px;
+  background: rgba(46, 204, 113, 0.45);
+  border: 2px solid #2ecc71;
+  border-radius: 50%;
+  transform: translate(-50%, 0);
+  box-shadow: 0 0 12px #2ecc71;
+}
+
+/* ================= 3. LAVARSE LA CARA (AGUA FRÍA) ================= */
+.sink-splash-container {
+  width: 200px;
+  height: 200px;
+  margin: 0 auto 20px auto;
+  border-radius: 50%;
+  background: radial-gradient(circle, #0984e3 20%, #1e272e 80%);
+  border: 4px solid #74b9ff;
+  box-shadow: 0 0 20px rgba(9, 132, 227, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+
+.sink-water-wave {
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  background: rgba(116, 185, 255, 0.7);
+  transition: height 0.15s ease;
+}
+
+.splash-click-btn {
+  z-index: 5;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #fff;
+  color: #fff;
+  padding: 12px 18px;
+  border-radius: 25px;
+  font-weight: bold;
+  letter-spacing: 2px;
+  font-size: 11px;
+}
+
+/* ================= 4. LIMPIAR ESPEJO EMPAÑADO ================= */
+.mirror-canvas-container {
+  position: relative;
+  width: 260px;
+  height: 220px;
+  margin: 0 auto 18px auto;
+  border: 6px solid #576574;
+  border-radius: 6px;
+  overflow: hidden;
+  box-shadow: 0 0 20px rgba(0,0,0,0.8);
+}
+
+#mirror-canvas {
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  background: #2d3436;
+}
+
+/* ================= 5. HERVIR INFUSIÓN / CALDERA ================= */
+.kettle-meter-container {
+  width: 240px;
+  margin: 0 auto 20px auto;
+}
+
+.kettle-pressure-track {
+  width: 100%;
+  height: 24px;
+  background: #111;
+  border: 2px solid #d35400;
+  border-radius: 4px;
+  position: relative;
+  overflow: hidden;
+}
+
+.kettle-sweet-spot {
+  position: absolute;
+  top: 0;
+  left: 60%;
+  width: 20%;
+  height: 100%;
+  background: rgba(46, 204, 113, 0.5);
+  border-left: 2px solid #2ecc71;
+  border-right: 2px solid #2ecc71;
+}
+
+.kettle-needle-indicator {
+  position: absolute;
+  top: 0;
+  left: 0%;
+  width: 6px;
+  height: 100%;
+  background: #ff4757;
+  box-shadow: 0 0 8px #ff4757;
+  transition: left 0.05s linear;
+}
+
+/* ================= 6. CERRAR FUGA DE TUBERÍA ================= */
+.pipe-leak-meter {
+  width: 220px;
+  height: 30px;
+  margin: 0 auto 20px auto;
+  border: 2px solid #3498db;
+  border-radius: 4px;
+  background: #0f141d;
+  position: relative;
+  overflow: hidden;
+}
+
+.pipe-target-zone {
+  position: absolute;
+  top: 0;
+  left: 45%;
+  width: 22%;
+  height: 100%;
+  background: rgba(52, 152, 219, 0.4);
+}
+
+.pipe-cursor {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 8px;
+  height: 100%;
+  background: #f1c40f;
+  box-shadow: 0 0 10px #f1c40f;
+}
+
+/* ================= 7. SINTONIZAR TV CRT ================= */
+.tv-screen-box {
+  width: 260px;
+  height: 180px;
+  margin: 0 auto 16px auto;
+  background: #000;
+  border: 8px solid #2f3640;
+  border-radius: 8px;
+  position: relative;
+  overflow: hidden;
+}
+
+#tv-static-canvas {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.tv-tuner-slider {
+  width: 220px;
+  margin-bottom: 14px;
+}
+
+/* ================= 8. REBOBINAR CASETE VHS ================= */
+.cassette-box {
+  width: 240px;
+  height: 150px;
+  margin: 0 auto 18px auto;
+  background: #2d3436;
+  border: 4px solid #636e72;
+  border-radius: 8px;
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 14px;
+  box-shadow: 0 0 15px rgba(0,0,0,0.8);
+}
+
+.tape-reel {
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  background: #111;
+  border: 4px dashed #dfe6e9;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.tape-reel-center {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+}
+
+/* ================= 9. MÁQUINA DE ESCRIBIR ================= */
+.typewriter-display {
+  background: #f5f6fa;
+  color: #111;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 20px;
+  letter-spacing: 5px;
+  font-weight: bold;
+  padding: 16px;
+  border-radius: 4px;
+  margin-bottom: 20px;
+  min-height: 55px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border: 2px solid #718093;
+}
+
+.typewriter-keypad {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.type-key-btn {
+  background: #2f3640;
+  color: #f5f6fa;
+  border: 1px solid #718093;
+  font-size: 14px;
+  font-weight: bold;
+  width: 38px;
+  height: 38px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.type-key-btn:hover {
+  background: #00d2d3;
+  color: #111;
+}
+
+/* ================= 10. CAJA DE FUSIBLES ================= */
+.fusebox-switches-row {
+  display: flex;
+  justify-content: center;
+  gap: 16px;
+  margin: 0 auto 20px auto;
+}
+
+.fuse-switch {
+  width: 45px;
+  height: 90px;
+  background: #2f3640;
+  border: 2px solid #576574;
+  border-radius: 6px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 4px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.fuse-switch.on {
+  border-color: #2ed573;
+  box-shadow: 0 0 12px rgba(46, 213, 115, 0.4);
+}
+
+.fuse-toggle-handle {
+  width: 32px;
+  height: 36px;
+  background: #ff4757;
+  border-radius: 4px;
+  transition: transform 0.2s ease;
+}
+
+.fuse-switch.on .fuse-toggle-handle {
+  background: #2ed573;
+  transform: translateY(32px);
+}
+
+/* ================= PANTALLAS DE ESTADO (START / GAME OVER / WIN) ================= */
+.overlay-screen {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(2, 3, 6, 0.95);
+  backdrop-filter: blur(10px);
+  z-index: 100;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+  opacity: 1;
+  transition: opacity 0.8s ease;
+}
+
+.overlay-screen.hidden {
+  opacity: 0;
+  pointer-events: none;
+}
+
+.screen-card {
+  background: #090c10;
+  border: 1px solid #1f2937;
+  border-radius: 6px;
+  padding: 35px;
+  max-width: 660px;
+  width: 100%;
+  text-align: center;
+  box-shadow: 0 0 50px rgba(0, 0, 0, 0.95);
+  position: relative;
+  overflow: hidden;
+}
+
+.card-glitch-border {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(90deg, #ff4757, #ffa502, #2ed573, #1e90ff);
+}
+
+.screen-title {
+  font-size: 22px;
+  letter-spacing: 4px;
+  color: #f1f2f6;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+.screen-subtitle {
+  font-size: 12px;
+  letter-spacing: 2px;
+  color: #ff4757;
+  margin-bottom: 20px;
+  text-transform: uppercase;
+}
+
+.screen-desc {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #a4b0be;
+  margin-bottom: 22px;
+  text-align: justify;
+}
+
+.screen-instructions {
+  background: #11141a;
+  border: 1px dashed #2f3542;
+  border-radius: 4px;
+  padding: 14px;
+  margin-bottom: 24px;
+  text-align: left;
+  font-size: 11px;
+  color: #ced6e0;
+  line-height: 1.5;
+}
+
+.screen-instructions ul {
+  margin-left: 18px;
+  margin-top: 6px;
+}
+
+.start-btn {
+  background: #eb4d4b;
+  color: #fff;
+  border: none;
+  font-family: inherit;
+  font-size: 14px;
+  letter-spacing: 3px;
+  font-weight: bold;
+  padding: 15px 34px;
+  border-radius: 4px;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(235, 77, 75, 0.6);
+  transition: all 0.3s ease;
+}
+
+.start-btn:hover {
+  background: #ff7979;
+  box-shadow: 0 0 35px rgba(255, 121, 121, 0.9);
+  transform: translateY(-2px);
+}
+
+.stats-row {
+  display: flex;
+  justify-content: space-around;
+  margin-bottom: 20px;
+  padding: 10px;
+  background: #121820;
+  border-radius: 4px;
+}
+
+.stat-item {
+  display: flex;
+  flex-direction: column;
+}
+
+.stat-label {
+  font-size: 10px;
+  color: #747d8c;
+  letter-spacing: 1px;
+  margin-bottom: 3px;
+}
+
+.stat-val {
+  font-size: 15px;
+  color: #f1f2f6;
+  font-weight: bold;
+}
