@@ -1,0 +1,239 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#040914">
+  <title>Defensa Orbital AR — WebXR &amp; A-Frame</title>
+  <link rel="stylesheet" href="style.css">
+  <script src="https://aframe.io/releases/1.8.0/aframe.min.js"></script>
+  <script src="game.js"></script>
+</head>
+<body>
+  <!-- Escena 3D / WebXR / WebAR -->
+  <a-scene
+    id="game-scene"
+    webxr="optionalFeatures: hit-test, dom-overlay; overlayElement: #hud"
+    renderer="colorManagement: true; antialias: true; alpha: true"
+    xr-mode-ui="enabled: true"
+    device-orientation-permission-ui="enabled: true"
+    game-manager>
+
+    <!-- Iluminación espacial -->
+    <a-entity light="type: ambient; color: #7aa7ff; intensity: 0.75"></a-entity>
+    <a-entity light="type: directional; color: #ffffff; intensity: 1.05" position="4 8 5"></a-entity>
+    <a-entity light="type: point; color: #00f0ff; intensity: 1.6; distance: 18" position="0 1.8 0"></a-entity>
+
+    <!-- Entorno espacial 360° (se oculta automáticamente al entrar en modo AR) -->
+    <a-entity id="space-environment">
+      <a-sky color="#030712"></a-sky>
+      <a-entity starfield="count: 280; radius: 75"></a-entity>
+
+      <!-- Planeta distante y anillos orbitales decorativos -->
+      <a-entity position="-26 14 -44" rotation="12 20 -18">
+        <a-sphere radius="7.5" color="#112244" material="roughness: 0.85; metalness: 0.15; emissive: #091836; emissiveIntensity: 0.5"></a-sphere>
+        <a-ring radius-inner="9.5" radius-outer="13.2" rotation="75 15 0" color="#00f0ff" material="side: double; shader: flat; transparent: true; opacity: 0.25"></a-ring>
+      </a-entity>
+
+      <!-- Horizonte orbital sutil -->
+      <a-ring position="0 -2.5 0" rotation="-90 0 0" radius-inner="18" radius-outer="18.12" color="#00f0ff" material="shader: flat; transparent: true; opacity: 0.18"></a-ring>
+      <a-ring position="0 -2.5 0" rotation="-90 0 0" radius-inner="30" radius-outer="30.15" color="#3b82f6" material="shader: flat; transparent: true; opacity: 0.12"></a-ring>
+    </a-entity>
+
+    <!-- Núcleo de la estación espacial (bajo el jugador en el centro para no obstruir la vista) -->
+    <a-entity id="station-core" position="0 0.15 0">
+      <a-ring rotation="-90 0 0" radius-inner="1.1" radius-outer="1.26" color="#00f0ff" material="shader: flat; side: double; transparent: true; opacity: 0.55"></a-ring>
+      <a-ring rotation="-90 0 0" radius-inner="1.65" radius-outer="1.72" color="#00f0ff" material="shader: flat; side: double; transparent: true; opacity: 0.28" animation="property: rotation; to: -90 0 360; loop: true; dur: 14000; easing: linear"></a-ring>
+      <a-torus position="0 0.05 0" rotation="90 0 0" radius="0.72" radius-tubular="0.03" color="#00f0ff" material="emissive: #00f0ff; emissiveIntensity: 0.7; transparent: true; opacity: 0.65"></a-torus>
+    </a-entity>
+
+    <!-- Contenedores dinámicos para mantener limpia la escena -->
+    <a-entity id="enemies-container"></a-entity>
+    <a-entity id="fx-container"></a-entity>
+
+    <!-- Rig y cámara con giroscopio 360° / mouse / raycaster -->
+    <a-entity id="rig" position="0 0 0">
+      <a-camera
+        id="player-camera"
+        position="0 1.6 0"
+        look-controls="magicWindowTrackingEnabled: true; touchEnabled: true; mouseEnabled: true"
+        wasd-controls="enabled: false">
+
+        <!-- Cursor virtual central (Apuntado Dual: Fuse 0.9s + Disparo Instantáneo) -->
+        <a-entity
+          id="reticle"
+          position="0 0 -1.5"
+          cursor="fuse: true; fuseTimeout: 900"
+          raycaster="objects: .target; far: 60"
+          reticle-feedback>
+          <a-ring
+            id="reticle-ring"
+            radius-inner="0.022"
+            radius-outer="0.034"
+            color="#00f0ff"
+            material="shader: flat; transparent: true; opacity: 0.92; depthTest: false">
+          </a-ring>
+          <a-ring
+            id="reticle-fuse-ring"
+            radius-inner="0.039"
+            radius-outer="0.047"
+            theta-start="90"
+            theta-length="0"
+            color="#ff2a55"
+            material="shader: flat; transparent: true; opacity: 0.95; depthTest: false">
+          </a-ring>
+          <a-circle
+            id="reticle-dot"
+            radius="0.005"
+            color="#00f0ff"
+            material="shader: flat; transparent: true; opacity: 0.95; depthTest: false">
+          </a-circle>
+        </a-entity>
+
+      </a-camera>
+    </a-entity>
+  </a-scene>
+
+  <!-- Interfaz HUD superpuesta (compatible con WebXR dom-overlay) -->
+  <div id="hud">
+    <div id="damage-flash" aria-hidden="true"></div>
+    <div id="heal-flash" aria-hidden="true"></div>
+
+    <!-- Barra superior de combate -->
+    <header id="top-hud" class="hidden">
+      <div class="hud-panel stats-panel">
+        <div class="stat-block">
+          <span class="stat-label">PUNTUACIÓN</span>
+          <span id="score-value" class="stat-value">0</span>
+        </div>
+        <div class="stat-divider"></div>
+        <div class="stat-block">
+          <span class="stat-label">RÉCORD</span>
+          <span id="hud-high-score" class="stat-value accent-gold">0</span>
+        </div>
+      </div>
+
+      <div class="hud-panel shield-panel">
+        <div class="shield-header">
+          <span class="wave-badge">OLEADA <strong id="wave-value">1</strong></span>
+          <span class="shield-text">ESCUDO <strong id="shield-value">100%</strong></span>
+        </div>
+        <div class="shield-bar-track" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="100">
+          <div id="shield-bar" class="shield-bar-fill"></div>
+        </div>
+      </div>
+
+      <div class="hud-panel actions-panel hud-interactive">
+        <button id="toggle-touch-btn" class="icon-btn" type="button" title="Mostrar/Ocultar botón táctil" aria-label="Mostrar u ocultar botón táctil de disparo">
+          🎯
+        </button>
+        <button id="mute-btn" class="icon-btn" type="button" title="Silenciar / Activar audio" aria-label="Silenciar o activar audio">
+          🔊
+        </button>
+        <button id="hud-ar-btn" class="icon-btn ar-pill hidden" type="button" title="Modo Realidad Aumentada">
+          AR
+        </button>
+      </div>
+    </header>
+
+    <!-- Anuncio de oleada y estado del objetivo -->
+    <div id="wave-banner" class="hidden" aria-live="polite">OLEADA 1</div>
+    <div id="lock-indicator" class="hidden">OBJETIVO EN MIRA</div>
+
+    <!-- Botón táctil grande para disparo con pulgar (móviles y opción HUD) -->
+    <button
+      id="mobile-fire-btn"
+      class="hud-interactive hidden"
+      type="button"
+      aria-label="Disparar láser">
+      <span class="fire-ring"></span>
+      <span class="fire-label">FUEGO</span>
+    </button>
+
+    <!-- Modal de Inicio -->
+    <section id="start-screen" class="modal-overlay">
+      <div class="modal-card hud-interactive">
+        <div class="badge-top">SISTEMA DE DEFENSA WEBXR // v1.8</div>
+        <h1 class="game-title">DEFENSA ORBITAL <span>AR</span></h1>
+        <p class="game-subtitle">
+          Protege el núcleo de la estación en 360°. Apunta con tu mirada, el ratón o el giroscopio de tu móvil.
+        </p>
+
+        <div class="record-box">
+          <span class="record-label">RÉCORD MÁXIMO</span>
+          <strong id="start-high-score" class="record-value">0</strong>
+        </div>
+
+        <div class="briefing-grid">
+          <div class="brief-item">
+            <span class="brief-icon meteor">◆</span>
+            <div>
+              <strong>Meteoritos</strong>
+              <small>1 impacto (+100 pts)</small>
+            </div>
+          </div>
+          <div class="brief-item">
+            <span class="brief-icon drone">◎</span>
+            <div>
+              <strong>Drones Invasores</strong>
+              <small>Zigzag · 2 impactos o 1 carga (+250 pts)</small>
+            </div>
+          </div>
+          <div class="brief-item">
+            <span class="brief-icon capsule">✦</span>
+            <div>
+              <strong>Cápsula de Energía</strong>
+              <small>Restaura +20% escudo</small>
+            </div>
+          </div>
+          <div class="brief-item">
+            <span class="brief-icon reticle">⊕</span>
+            <div>
+              <strong>Apuntado Dual</strong>
+              <small>Fijación 0.9s o disparo instantáneo</small>
+            </div>
+          </div>
+        </div>
+
+        <label class="touch-option">
+          <input type="checkbox" id="always-show-fire-chk">
+          <span>Mostrar siempre botón táctil de disparo en el HUD</span>
+        </label>
+
+        <div class="modal-actions">
+          <button id="start-btn" class="primary-btn" type="button">INICIAR MISIÓN</button>
+          <button id="start-ar-btn" class="secondary-btn hidden" type="button">INICIAR EN REALIDAD AUMENTADA (AR)</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Modal de Game Over -->
+    <section id="gameover-screen" class="modal-overlay hidden">
+      <div class="modal-card hud-interactive">
+        <div class="badge-top danger">ESTACIÓN CRÍTICA // FALLO DE ESCUDOS</div>
+        <h2 class="gameover-title">MISIÓN TERMINADA</h2>
+        <div id="new-record-badge" class="new-record hidden">★ ¡NUEVO RÉCORD ESTABLECIDO! ★</div>
+
+        <div class="results-grid">
+          <div class="result-cell">
+            <span>PUNTUACIÓN FINAL</span>
+            <strong id="final-score">0</strong>
+          </div>
+          <div class="result-cell">
+            <span>OLEADA ALCANZADA</span>
+            <strong id="final-wave">1</strong>
+          </div>
+          <div class="result-cell">
+            <span>RÉCORD MÁXIMO</span>
+            <strong id="gameover-high-score" class="accent-gold">0</strong>
+          </div>
+        </div>
+
+        <div class="modal-actions">
+          <button id="restart-btn" class="primary-btn" type="button">REINTENTAR MISIÓN</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</body>
+</html>
