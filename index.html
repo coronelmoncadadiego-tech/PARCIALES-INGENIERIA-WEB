@@ -17,6 +17,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
   <link rel="stylesheet" href="personajes-3d/personajes.css">
+  <script type="importmap">
+    {
+      "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+      }
+    }
+  </script>
 </head>
 <body>
 
@@ -241,6 +249,75 @@
           </div>
         </div>
 
+        <article class="glass-card scene-viewer-card" aria-labelledby="scene-viewer-title">
+          <header class="scene-viewer-header">
+            <div>
+              <span class="character-section-kicker">NAKUSU · HANA · VULKANOR</span>
+              <h3 id="scene-viewer-title">🎬 ESCENARIO 3D INTERACTIVO — ENCUENTRO EN LOS PÁRAMOS</h3>
+              <p class="scene-viewer-guide">Clic izquierdo: Rotar <span aria-hidden="true">|</span> Rueda: Zoom <span aria-hidden="true">|</span> Clic derecho: Mover</p>
+            </div>
+            <div class="scene-viewer-actions">
+              <button class="scene-button" type="button" data-scene-animation disabled aria-pressed="false">Reproducir animaciones</button>
+              <button class="scene-button" type="button" data-scene-reset>Resetear cámara</button>
+            </div>
+          </header>
+
+          <div class="scene-stage" data-scene-stage>
+            <canvas class="scene-canvas" data-scene-canvas aria-label="Vista 3D interactiva del escenario con Nakusu, Hana y Vulkanor" role="img"></canvas>
+            <div class="scene-loading" data-scene-loading role="status" aria-live="polite">
+              <span class="scene-spinner" aria-hidden="true"></span>
+              <span data-scene-loading-label>Cargando escenario 3D…</span>
+              <progress class="scene-progress" data-scene-progress max="100" value="0">0%</progress>
+              <span data-scene-progress-label>0%</span>
+            </div>
+            <p class="scene-error" data-scene-error role="alert" hidden></p>
+
+            <details class="scene-controls" open>
+              <summary>Controles de atmósfera <span aria-hidden="true">⌄</span></summary>
+              <div class="scene-controls-content">
+                <label class="scene-control">
+                  <span>Atmósfera</span>
+                  <select data-scene-preset>
+                    <option value="night">Noche Distópica</option>
+                    <option value="eclipse">Eclipse Arcano</option>
+                    <option value="studio">Inspección de Estudio</option>
+                  </select>
+                </label>
+                <div class="scene-control">
+                  <div class="scene-control-heading">
+                    <label for="scene-light">Intensidad de luz</label>
+                    <output for="scene-light" data-scene-light-output>1.0</output>
+                  </div>
+                  <input id="scene-light" data-scene-light type="range" min="0.2" max="2.5" step="0.1" value="1">
+                </div>
+                <label class="scene-control scene-control-inline">
+                  <span>Neblina</span>
+                  <input data-scene-fog-toggle type="checkbox" checked>
+                </label>
+                <div class="scene-control">
+                  <div class="scene-control-heading">
+                    <label for="scene-fog">Densidad de neblina</label>
+                    <output for="scene-fog" data-scene-fog-output>0.018</output>
+                  </div>
+                  <input id="scene-fog" data-scene-fog type="range" min="0" max="0.08" step="0.002" value="0.018">
+                </div>
+                <label class="scene-control scene-control-inline">
+                  <span>Nubes y partículas</span>
+                  <input data-scene-cloud-toggle type="checkbox" checked>
+                </label>
+                <div class="scene-control">
+                  <div class="scene-control-heading">
+                    <label for="scene-cloud">Opacidad de nubes</label>
+                    <output for="scene-cloud" data-scene-cloud-output>55%</output>
+                  </div>
+                  <input id="scene-cloud" data-scene-cloud type="range" min="0" max="100" step="1" value="55">
+                </div>
+              </div>
+            </details>
+          </div>
+          <p class="scene-viewer-status" data-scene-status aria-live="polite">Preparando visor 3D…</p>
+        </article>
+
         <div class="character-card-grid">
           <article class="glass-card character-card" style="--character-accent:#871a10; --character-glow:rgba(135,26,16,.32)" aria-labelledby="nakusu-card-title">
             <a class="character-card-visual" href="personajes-3d/nakusu.html" aria-label="Explorar a Nakusu">
@@ -252,7 +329,7 @@
               <span class="character-role">PROTAGONISTA</span>
               <h3 id="nakusu-card-title">Nakusu</h3>
               <p>Un alma humana en un autómata despierta una magia que nadie creía posible.</p>
-              <div class="character-swatches" aria-label="Paleta de Nakusu: rojo óxido, gris metálico, púrpura arcano y verde oliva">
+              <div class="character-swatches" role="group" aria-label="Paleta de Nakusu: rojo óxido, gris metálico, púrpura arcano y verde oliva">
                 <span style="--swatch:#871a10" title="#871a10"></span><span style="--swatch:#625b5b" title="#625b5b"></span><span style="--swatch:#7a398a" title="#7a398a"></span><span style="--swatch:#42472b" title="#42472b"></span>
               </div>
               <a class="btn btn-primary character-card-cta" href="personajes-3d/nakusu.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
@@ -269,7 +346,7 @@
               <span class="character-role">COPROTAGONISTA · ALIADA</span>
               <h3 id="hana-card-title">Hana</h3>
               <p>Superviviente de las ruinas, encuentra en Nakusu a su única familia.</p>
-              <div class="character-swatches" aria-label="Paleta de Hana: cobre, verde bosque, púrpura oscuro y marrón cuero">
+              <div class="character-swatches" role="group" aria-label="Paleta de Hana: cobre, verde bosque, púrpura oscuro y marrón cuero">
                 <span style="--swatch:#b9602c" title="#b9602c"></span><span style="--swatch:#3d4e3b" title="#3d4e3b"></span><span style="--swatch:#442a4d" title="#442a4d"></span><span style="--swatch:#654a2d" title="#654a2d"></span>
               </div>
               <a class="btn btn-primary character-card-cta" href="personajes-3d/hana.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
@@ -286,7 +363,7 @@
               <span class="character-role">VILLANO · ANTAGONISTA</span>
               <h3 id="vulkanor-card-title">Vulkanor</h3>
               <p>Depredador de almas, rastrea la esencia única atrapada dentro de Nakusu.</p>
-              <div class="character-swatches" aria-label="Paleta de Vulkanor: violeta espectral, azul etéreo, índigo profundo y púrpura sombrío">
+              <div class="character-swatches" role="group" aria-label="Paleta de Vulkanor: violeta espectral, azul etéreo, índigo profundo y púrpura sombrío">
                 <span style="--swatch:#9a5dc8" title="#9a5dc8"></span><span style="--swatch:#84a6e4" title="#84a6e4"></span><span style="--swatch:#3b396d" title="#3b396d"></span><span style="--swatch:#3e3043" title="#3e3043"></span>
               </div>
               <a class="btn btn-primary character-card-cta" href="personajes-3d/vulkanor.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
@@ -842,5 +919,6 @@
   <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <script src="js/main.js"></script>
   <script src="js/personajes.js"></script>
+  <script type="module" src="personajes-3d/escenario.js"></script>
 </body>
 </html>
