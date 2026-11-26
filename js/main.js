@@ -7,6 +7,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMobileNav();
   initAnimatedCounters();
   initContactForm();
+  initGamesFilter();
   initModals();
 });
 
@@ -192,8 +193,115 @@ const GAMES_DATA = {
       'Sintetizador procedural nativo con Web Audio API generando música synthwave y efectos sonoros en tiempo real.'
     ],
     tags: ['HTML5 Canvas 2D', 'Procedural Synthwave', 'Web Audio API', 'Parallax Starfield', 'Particle Physics Engine']
+  },
+  game4: {
+    title: 'Futbolito Nocturno (VIDEOJUEGO4)',
+    category: '2D ARCADE • FÍSICAS & DEPORTES',
+    url: 'TODOSVIDEOJUEGOS/VIDEOJUEGO4/index.html',
+    desc: 'Experiencia interactiva en navegador con físicas en tiempo real, sistema de puntuación persistente y controles optimizados. Compite 2 jugadores en teclado compartido o desafía a la CPU con 6 skins personalizables y power-ups dinámicos en la cancha.',
+    controls: [
+      { key: 'W A S D', action: 'Mover Ficha Azul (Jugador 1)' },
+      { key: 'Espacio', action: 'Patada / Turbo Jugador 1' },
+      { key: '▲ ◄ ▼ ►', action: 'Mover Ficha Roja (Jugador 2 en modo local)' },
+      { key: 'Enter / Shift Der', action: 'Patada / Turbo Jugador 2' },
+      { key: 'P / M', action: 'Pausar partido / Activar o silenciar audio' }
+    ],
+    features: [
+      'Modos 2 Jugadores (Teclado Compartido) y 1 Jugador vs CPU (Fácil, Normal, Difícil).',
+      'Físicas 2D con sub-pasos de colisión, rebotes elásticos en postes y meta configurable (3, 5 o 7 goles).',
+      '6 Ítems especiales en cancha: Congelar Rival, Balón Congelado, Multi-Balón x3, Súper Turbo, Modo Gigante y Súper Disparo.',
+      '6 Skins procedurales por jugador (Neón Clásico, Ciborg, Fuego, Galaxia, Campeón Oro y Ártico).',
+      'Tabla de clasificación acumulada e historial de partidos persistente en LocalStorage.'
+    ],
+    tags: ['HTML5', 'Canvas 2D', 'Físicas en Tiempo Real', 'Web Audio API', 'LocalStorage']
+  },
+  game5: {
+    title: 'Defensa Orbital VR',
+    category: 'WEBVR / WEBAR (A-FRAME)',
+    url: 'TODOSVIDEOJUEGOS/VIDEOJUEGO5VR/index.html',
+    desc: 'Minijuego espacial inmersivo en 360° y Realidad Aumentada con apuntado por Raycaster, oleadas de asteroides con alerta de proximidad direccional, audio procedural y tabla de clasificación de pilotos.',
+    controls: [
+      { key: 'Giroscopio / Ratón', action: 'Explorar entorno espacial 360° y alinear la mira' },
+      { key: 'Mirada 0.9s (Fuse)', action: 'Disparo automático al fijar objetivo con la retícula' },
+      { key: 'Clic / Toque / Fuego', action: 'Disparo láser instantáneo en PC o botón táctil móvil' },
+      { key: 'Botón AR / VR', action: 'Activar sesión inmersiva WebXR o Realidad Aumentada' }
+    ],
+    features: [
+      'Entorno 360° en A-Frame con soporte nativo WebXR y modo Realidad Aumentada (dom-overlay).',
+      'Apuntado dual por Raycaster: carga progresiva por mirada (0.9s) o disparo instantáneo.',
+      'Oleadas crecientes con meteoritos, drones invasores en zigzag y cápsulas restauradoras de escudo.',
+      'Sistema de alerta de proximidad direccional y retroalimentación visual/sonora procedural.',
+      'Tabla Top 10 de pilotos y récords persistentes almacenados en LocalStorage.'
+    ],
+    tags: ['A-Frame', 'WebXR', 'Raycaster', 'Giroscopio / AR', 'Web Audio API', 'LocalStorage']
   }
 };
+
+/**
+ * 4b. Interactive Category Filtering for Video Games Showcase
+ */
+function initGamesFilter() {
+  const filterButtons = document.querySelectorAll('.games-filter-bar .filter-btn');
+  const gameCards = document.querySelectorAll('#gamesGrid .game-card');
+  const statusEl = document.getElementById('gamesFilterStatus');
+
+  if (filterButtons.length === 0 || gameCards.length === 0) return;
+
+  const totalCount = gameCards.length;
+
+  // Compute dynamic counts per category
+  const counts = { all: totalCount };
+  gameCards.forEach(card => {
+    const cat = card.getAttribute('data-category');
+    if (cat) counts[cat] = (counts[cat] || 0) + 1;
+  });
+
+  filterButtons.forEach(btn => {
+    const filter = btn.getAttribute('data-filter');
+    const countBadge = btn.querySelector('.filter-count');
+    if (countBadge && counts[filter] !== undefined) {
+      countBadge.textContent = counts[filter];
+    }
+
+    btn.addEventListener('click', () => {
+      // Update active button state & ARIA
+      filterButtons.forEach(b => {
+        b.classList.remove('active');
+        b.setAttribute('aria-pressed', 'false');
+      });
+      btn.classList.add('active');
+      btn.setAttribute('aria-pressed', 'true');
+
+      let visibleCount = 0;
+
+      gameCards.forEach((card, index) => {
+        const category = card.getAttribute('data-category');
+        const matches = filter === 'all' || category === filter;
+
+        if (matches) {
+          card.classList.remove('is-hidden');
+          // Restart entrance animation cleanly
+          card.classList.remove('is-revealing');
+          void card.offsetWidth;
+          card.style.animationDelay = `${visibleCount * 55}ms`;
+          card.classList.add('is-revealing');
+          visibleCount += 1;
+        } else {
+          card.classList.remove('is-revealing');
+          card.style.animationDelay = '';
+          card.classList.add('is-hidden');
+        }
+      });
+
+      if (statusEl) {
+        const label = btn.querySelector('span')?.textContent || 'Todos';
+        statusEl.textContent = filter === 'all'
+          ? `Mostrando ${visibleCount} de ${totalCount} experiencias jugables`
+          : `Categoría ${label}: ${visibleCount} ${visibleCount === 1 ? 'juego disponible' : 'juegos disponibles'}`;
+      }
+    });
+  });
+}
 
 function openGameModal(gameKey) {
   const data = GAMES_DATA[gameKey];

@@ -88,7 +88,7 @@
               <span class="stat-label">Proyectos ejecutados</span>
             </div>
             <div class="stat-item">
-              <span class="stat-number" data-target="3">0</span><span class="stat-plus">🕹️</span>
+              <span class="stat-number" data-target="5">0</span><span class="stat-plus">🕹️</span>
               <span class="stat-label">Videojuegos desarrollados</span>
             </div>
           </div>
@@ -230,24 +230,52 @@
     </section>
 
     <!-- ==========================================================================
-         NUEVA SECCIÓN: VIDEOJUEGOS DESARROLLADOS
+         SECCIÓN: VIDEOJUEGOS DESARROLLADOS (ARCADE & XR SHOWCASE)
          ========================================================================== -->
     <section id="videojuegos" class="section section-games">
       <div class="container">
-        <div class="section-tag-badge">
-          <span class="badge-status">
-            <span class="status-dot"></span> Game Development & Creative Coding
-          </span>
+        <div class="games-header-row">
+          <div>
+            <div class="section-tag-badge">
+              <span class="badge-status">
+                <span class="status-dot"></span> Arcade &amp; XR Showcase • Creative Coding
+              </span>
+            </div>
+            <h2 class="section-title">Videojuegos Desarrollados</h2>
+            <p class="section-lead">Experiencias interactivas en 2D, 3D WebGL y Realidad Virtual / Aumentada desarrolladas con tecnologías web nativas. Filtra por categoría y juega al instante.</p>
+          </div>
         </div>
-        <h2 class="section-title">Videojuegos Desarrollados</h2>
-        <p class="section-lead">Experiencias interactivas, motores procedurales en 2D y 3D, síntesis de audio diegético y mecánicas completas desarrolladas con tecnologías web nativas. ¡Haz clic para jugar directamente!</p>
 
-        <div class="games-grid">
+        <!-- Barra de Filtros Interactivos por Categoría -->
+        <div class="games-filter-bar" role="group" aria-label="Filtrar videojuegos por categoría">
+          <button type="button" class="filter-btn active" data-filter="all" aria-pressed="true">
+            <span>Todos</span>
+            <span class="filter-count" data-count="all">5</span>
+          </button>
+          <button type="button" class="filter-btn" data-filter="2d-arcade" aria-pressed="false">
+            <span>2D Arcade</span>
+            <span class="filter-count" data-count="2d-arcade">3</span>
+          </button>
+          <button type="button" class="filter-btn" data-filter="3d-webgl" aria-pressed="false">
+            <span>3D WebGL</span>
+            <span class="filter-count" data-count="3d-webgl">1</span>
+          </button>
+          <button type="button" class="filter-btn" data-filter="vr-webar" aria-pressed="false">
+            <span>VR / WebAR</span>
+            <span class="filter-count" data-count="vr-webar">1</span>
+          </button>
+        </div>
+
+        <p id="gamesFilterStatus" class="games-filter-status" aria-live="polite">
+          Mostrando 5 de 5 experiencias jugables
+        </p>
+
+        <div class="games-grid" id="gamesGrid">
           <!-- Videojuego 1: Halloween Pong 2D -->
-          <article class="glass-card game-card game-card-halloween">
+          <article class="glass-card game-card game-card-halloween" data-category="2d-arcade">
             <div class="game-visual game-visual-halloween">
-              <div class="game-badge-overlay top-left">🎃 ARCADE RETRO</div>
-              <div class="game-badge-overlay top-right">1P / 2P LOCAL</div>
+              <div class="game-badge-overlay top-left">👥 1P / 2P Local</div>
+              <div class="game-badge-overlay top-right">2D CANVAS</div>
               <div class="game-visual-art">
                 <div class="spooky-backdrop"></div>
                 <div class="spooky-elements">
@@ -263,47 +291,52 @@
                 </div>
                 <div class="crt-scanline-fx"></div>
               </div>
-              <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO1/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar Halloween Pong en nueva pestaña">
-                <span class="quick-play-btn">▶ JUGAR AHORA</span>
+              <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO1/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar Halloween Pong 2D en nueva pestaña">
+                <span class="quick-play-btn">▶ Jugar Ahora</span>
               </a>
             </div>
 
             <div class="game-body">
-              <span class="game-category cat-halloween">ARCADE 2D • PIXEL ART</span>
+              <div class="game-meta-top">
+                <span class="game-category cat-halloween">2D ARCADE • PIXEL ART</span>
+                <div class="game-compatibility" role="group" aria-label="Compatibilidad de dispositivos">
+                  <span class="compat-badge" title="Compatible con PC y teclado">🖥️ PC</span>
+                </div>
+              </div>
               <h3 class="game-title">Halloween Pong 2D</h3>
               <p class="game-subtitle">Duelo de Almas • Spooky Pixel Edition</p>
-              
+
               <p class="game-desc">
-                Videojuego arcade retro de tenis paranormal ambientado en Noche de Brujas. Cuenta con física de rebote dinámica, emulación de pantalla de tubo CRT con líneas de escaneo, sonido procedural de 8 bits y calavera espectral pixel art.
+                Videojuego arcade retro de tenis paranormal ambientado en Noche de Brujas, con física de rebote dinámica, emulación CRT y síntesis de audio de 8 bits.
               </p>
 
               <ul class="game-features-list">
-                <li><span>🎃</span> <strong>Modo 1P vs CPU Demonio:</strong> 3 dificultades (Espíritu, Monstruo, Pesadilla).</li>
-                <li><span>👻</span> <strong>Modo 2P Local:</strong> Duelo mano a mano competitivo en el mismo teclado.</li>
-                <li><span>💀</span> <strong>Configurable:</strong> Partidas a 5, 10 o 15 almas con audio procedural nativo.</li>
+                <li><span>🎃</span> <strong>1P vs CPU Demonio:</strong> 3 dificultades (Espíritu, Monstruo, Pesadilla).</li>
+                <li><span>👻</span> <strong>2 Jugadores Local:</strong> Duelo competitivo en el mismo teclado.</li>
+                <li><span>💀</span> <strong>Audio &amp; Shader CRT:</strong> Partidas a 5, 10 o 15 almas en tiempo real.</li>
               </ul>
 
               <div class="project-tags game-tags">
-                <span>HTML5 Canvas</span> <span>Pixel Art</span> <span>Web Audio API</span> <span>CRT Shader</span>
+                <span>HTML5</span> <span>Canvas</span> <span>Pixel Art</span> <span>Web Audio API</span>
               </div>
 
               <div class="game-btn-group">
                 <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO1/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-game-play btn-play-halloween">
-                  <span>🎮 Jugar Halloween Pong</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>▶ Jugar Ahora</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </a>
                 <button type="button" class="btn btn-game-info" onclick="openGameModal('game1')">
-                  <span>📋 Ver Controles & Detalles</span>
+                  <span>📋 Controles &amp; Detalles</span>
                 </button>
               </div>
             </div>
           </article>
 
           <!-- Videojuego 2: La Habitación del Sonámbulo -->
-          <article class="glass-card game-card game-card-horror">
+          <article class="glass-card game-card game-card-horror" data-category="3d-webgl">
             <div class="game-visual game-visual-horror">
-              <div class="game-badge-overlay top-left">👁️ TERROR 3D</div>
-              <div class="game-badge-overlay top-right">WEBGL / THREE.JS</div>
+              <div class="game-badge-overlay top-left">👤 1 Jugador</div>
+              <div class="game-badge-overlay top-right">3D THREE.JS</div>
               <div class="game-visual-art">
                 <div class="horror-backdrop"></div>
                 <div class="horror-flashlight-beam"></div>
@@ -321,46 +354,51 @@
                 <div class="vhs-noise-fx"></div>
               </div>
               <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO2/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar La Habitación del Sonámbulo en nueva pestaña">
-                <span class="quick-play-btn">▶ JUGAR AHORA</span>
+                <span class="quick-play-btn">▶ Jugar Ahora</span>
               </a>
             </div>
 
             <div class="game-body">
-              <span class="game-category cat-horror">SURVIVAL HORROR 3D • DIEGÉTICO</span>
+              <div class="game-meta-top">
+                <span class="game-category cat-horror">3D WEBGL • SURVIVAL HORROR</span>
+                <div class="game-compatibility" role="group" aria-label="Compatibilidad de dispositivos">
+                  <span class="compat-badge" title="Compatible con PC y ratón/teclado">🖥️ PC</span>
+                </div>
+              </div>
               <h3 class="game-title">La Habitación del Sonámbulo</h3>
               <p class="game-subtitle">Edición Casa Completa 3D • Three.js</p>
-              
+
               <p class="game-desc">
-                Experiencia inmersiva en primera persona de terror psicológico en 3D. Explora una casa completa de 7 estancias lúgubres mientras un espectro demoníaco te acecha. Gestiona la batería de tu linterna y supera 10 minijuegos diegéticos para resistir hasta el amanecer.
+                Terror psicológico en primera persona 3D. Explora 7 estancias interconectadas mientras un espectro te acecha, gestiona tu linterna y supera 10 minijuegos diegéticos.
               </p>
 
               <ul class="game-features-list">
                 <li><span>🏚️</span> <strong>Casa 3D Completa:</strong> 7 habitaciones con iluminación volumétrica dinámica.</li>
-                <li><span>🔦</span> <strong>Linterna & Demonio:</strong> Sistema de tolerancia lumínica y modo furia inmune.</li>
-                <li><span>🧠</span> <strong>10 Minijuegos:</strong> TV CRT, cinta VHS, fusibles eléctricos y neuro-monitor diegético.</li>
+                <li><span>🔦</span> <strong>Linterna &amp; Demonio:</strong> Sistema de tolerancia lumínica y modo furia.</li>
+                <li><span>🧠</span> <strong>10 Minijuegos:</strong> TV CRT, cinta VHS, fusibles y neuro-monitor diegético.</li>
               </ul>
 
               <div class="project-tags game-tags">
-                <span>Three.js 3D</span> <span>WebGL</span> <span>Web Audio API</span> <span>First Person</span>
+                <span>Three.js</span> <span>WebGL</span> <span>Web Audio API</span> <span>First Person</span>
               </div>
 
               <div class="game-btn-group">
                 <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO2/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-game-play btn-play-horror">
-                  <span>🎮 Jugar Sonámbulo 3D</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>▶ Jugar Ahora</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </a>
                 <button type="button" class="btn btn-game-info" onclick="openGameModal('game2')">
-                  <span>📋 Ver Controles & Detalles</span>
+                  <span>📋 Controles &amp; Detalles</span>
                 </button>
               </div>
             </div>
           </article>
 
           <!-- Videojuego 3: Cazas Galácticos -->
-          <article class="glass-card game-card game-card-scifi">
+          <article class="glass-card game-card game-card-scifi" data-category="2d-arcade">
             <div class="game-visual game-visual-scifi">
-              <div class="game-badge-overlay top-left">🚀 SCI-FI SHOOTER</div>
-              <div class="game-badge-overlay top-right">BULLET HELL 2D</div>
+              <div class="game-badge-overlay top-left">👤 1 Jugador</div>
+              <div class="game-badge-overlay top-right">2D CANVAS</div>
               <div class="game-visual-art">
                 <div class="scifi-stars-bg"></div>
                 <div class="scifi-nebula"></div>
@@ -373,36 +411,160 @@
                 <div class="scifi-hud-badge">ESCUDO 100% | OLEADAS 1+</div>
               </div>
               <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO3/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar Cazas Galácticos en nueva pestaña">
-                <span class="quick-play-btn">▶ JUGAR AHORA</span>
+                <span class="quick-play-btn">▶ Jugar Ahora</span>
               </a>
             </div>
 
             <div class="game-body">
-              <span class="game-category cat-scifi">ARCADE ESPACIAL • ACTION 2D</span>
+              <div class="game-meta-top">
+                <span class="game-category cat-scifi">2D ARCADE • SCI-FI SHOOTER</span>
+                <div class="game-compatibility" role="group" aria-label="Compatibilidad de dispositivos">
+                  <span class="compat-badge" title="Compatible con PC">🖥️ PC</span>
+                </div>
+              </div>
               <h3 class="game-title">Cazas Galácticos</h3>
               <p class="game-subtitle">Galactic Starfighter • Synthwave Sci-Fi</p>
-              
+
               <p class="game-desc">
-                Videojuego arcade espacial de combate en tiempo real con renderizado vectorial procedural. Elige entre 3 cazas estelares, destruye oleadas de flotas enemigas y asteroides, esquiva ráfagas tácticas y desata bombas Nova contra el Dreadnought colosal.
+                Shoot 'em up espacial de combate en tiempo real con renderizado vectorial procedural, 3 naves seleccionables, bombas Nova y jefe final Dreadnought.
               </p>
 
               <ul class="game-features-list">
-                <li><span>🛸</span> <strong>3 Cazas Seleccionables:</strong> Aurora X-1, Espectro V y Titán MK-II con stats únicos.</li>
-                <li><span>👾</span> <strong>Jefe Titánico:</strong> Acorazado Némesis con barra de salud y fases bullet-hell.</li>
-                <li><span>🎵</span> <strong>Audio Synthwave:</strong> Banda sonora procedural generada al 100% con Web Audio API.</li>
+                <li><span>🛸</span> <strong>3 Cazas Seleccionables:</strong> Aurora X-1, Espectro V y Titán MK-II.</li>
+                <li><span>👾</span> <strong>Jefe Titánico:</strong> Acorazado Némesis con fases bullet-hell y power-ups.</li>
+                <li><span>🎵</span> <strong>Audio Synthwave:</strong> Banda sonora procedural con Web Audio API.</li>
               </ul>
 
               <div class="project-tags game-tags">
-                <span>HTML5 Canvas 2D</span> <span>Procedural Synth</span> <span>Parallax</span> <span>Particle FX</span>
+                <span>HTML5</span> <span>Canvas</span> <span>Procedural Synth</span> <span>Particle FX</span>
               </div>
 
               <div class="game-btn-group">
                 <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO3/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-game-play btn-play-scifi">
-                  <span>🎮 Jugar Cazas Galácticos</span>
-                  <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
+                  <span>▶ Jugar Ahora</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
                 </a>
                 <button type="button" class="btn btn-game-info" onclick="openGameModal('game3')">
-                  <span>📋 Ver Controles & Detalles</span>
+                  <span>📋 Controles &amp; Detalles</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Videojuego 4: VIDEOJUEGO4 (Futbolito Nocturno) -->
+          <article class="glass-card game-card game-card-futbol" data-category="2d-arcade">
+            <div class="game-visual game-visual-futbol">
+              <div class="game-badge-overlay top-left">👥 1P / 2P Local</div>
+              <div class="game-badge-overlay top-right">2D CANVAS</div>
+              <div class="game-visual-art">
+                <div class="futbol-pitch-lines">
+                  <div class="futbol-center-circle"></div>
+                  <div class="futbol-goal left"></div>
+                  <div class="futbol-goal right"></div>
+                </div>
+                <div class="futbol-action-scene">
+                  <div class="futbol-token token-blue"></div>
+                  <div class="futbol-ball">⚽</div>
+                  <div class="futbol-token token-red"></div>
+                </div>
+                <div class="futbol-hud-badge">STADIUM NIGHT • POWER-UPS</div>
+              </div>
+              <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO4/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar VIDEOJUEGO4 Futbolito Nocturno en nueva pestaña">
+                <span class="quick-play-btn">▶ Jugar Ahora</span>
+              </a>
+            </div>
+
+            <div class="game-body">
+              <div class="game-meta-top">
+                <span class="game-category cat-futbol">2D ARCADE • DEPORTIVO</span>
+                <div class="game-compatibility" role="group" aria-label="Compatibilidad de dispositivos">
+                  <span class="compat-badge" title="Compatible con PC y teclado compartido">🖥️ PC</span>
+                </div>
+              </div>
+              <h3 class="game-title">Futbolito Nocturno <span class="game-folder-tag">VIDEOJUEGO4</span></h3>
+              <p class="game-subtitle">Estadio Nocturno • 1P vs CPU &amp; 2P Local</p>
+
+              <p class="game-desc">
+                Experiencia interactiva en navegador con físicas en tiempo real, sistema de puntuación persistente y controles optimizados para duelos rápidos o contra la IA.
+              </p>
+
+              <ul class="game-features-list">
+                <li><span>⚽</span> <strong>Modos 2P &amp; CPU:</strong> Teclado compartido o IA con 3 niveles de dificultad.</li>
+                <li><span>✨</span> <strong>6 Power-Ups &amp; Skins:</strong> Multi-balón, congelación, modo gigante y turbo.</li>
+                <li><span>🏆</span> <strong>Ranking Persistente:</strong> Tabla histórica y marcadores guardados en LocalStorage.</li>
+              </ul>
+
+              <div class="project-tags game-tags">
+                <span>HTML5</span> <span>Canvas</span> <span>Físicas 2D</span> <span>LocalStorage</span>
+              </div>
+
+              <div class="game-btn-group">
+                <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO4/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-game-play btn-play-futbol">
+                  <span>▶ Jugar Ahora</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+                <button type="button" class="btn btn-game-info" onclick="openGameModal('game4')">
+                  <span>📋 Controles &amp; Detalles</span>
+                </button>
+              </div>
+            </div>
+          </article>
+
+          <!-- Videojuego 5: Defensa Orbital VR / WebAR -->
+          <article class="glass-card game-card game-card-vr" data-category="vr-webar">
+            <div class="game-visual game-visual-vr">
+              <div class="game-badge-overlay top-left">👤 1 Jugador</div>
+              <div class="game-badge-overlay top-right">WEBVR / AR</div>
+              <div class="game-visual-art">
+                <div class="vr-starfield"></div>
+                <div class="vr-orbital-rings">
+                  <div class="vr-ring ring-outer"></div>
+                  <div class="vr-ring ring-inner"></div>
+                </div>
+                <div class="vr-reticle">
+                  <span class="vr-reticle-dot"></span>
+                </div>
+                <span class="vr-asteroid">☄️</span>
+                <span class="vr-drone">🛸</span>
+                <div class="vr-hud-badge">WEBXR 360° • RAYCASTER AR</div>
+              </div>
+              <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO5VR/index.html" target="_blank" rel="noopener noreferrer" class="game-quick-play-overlay" aria-label="Jugar Defensa Orbital VR en nueva pestaña">
+                <span class="quick-play-btn">▶ Jugar Ahora</span>
+              </a>
+            </div>
+
+            <div class="game-body">
+              <div class="game-meta-top">
+                <span class="game-category cat-vr">WEBVR / WEBAR (A-FRAME)</span>
+                <div class="game-compatibility" role="group" aria-label="Compatibilidad de dispositivos">
+                  <span class="compat-badge" title="Compatible con PC">🖥️ PC</span>
+                  <span class="compat-badge compat-vr" title="Compatible con celular en modo VR y Realidad Aumentada">📱 Celular (VR/AR)</span>
+                </div>
+              </div>
+              <h3 class="game-title">Defensa Orbital VR</h3>
+              <p class="game-subtitle">Estación Espacial 360° • WebXR &amp; Realidad Aumentada</p>
+
+              <p class="game-desc">
+                Minijuego espacial inmersivo en 360° y Realidad Aumentada con apuntado por Raycaster, oleadas de asteroides con alerta de proximidad direccional, audio procedural y tabla de clasificación de pilotos.
+              </p>
+
+              <ul class="game-features-list">
+                <li><span>🥽</span> <strong>Inmersión 360° &amp; AR:</strong> Apuntado dual por mirada (fuse 0.9s) o disparo táctil.</li>
+                <li><span>☄️</span> <strong>Oleadas &amp; Alertas:</strong> Meteoritos, drones evasivos y alerta direccional crítica.</li>
+                <li><span>🏆</span> <strong>Top 10 Pilotos:</strong> Síntesis de audio Web Audio y récords en LocalStorage.</li>
+              </ul>
+
+              <div class="project-tags game-tags">
+                <span>A-Frame</span> <span>WebXR</span> <span>Raycaster</span> <span>Giroscopio / AR</span> <span>LocalStorage</span>
+              </div>
+
+              <div class="game-btn-group">
+                <a href="TODOSVIDEOJUEGOS/VIDEOJUEGO5VR/index.html" target="_blank" rel="noopener noreferrer" class="btn btn-game-play btn-play-vr">
+                  <span>▶ Jugar Ahora</span>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                </a>
+                <button type="button" class="btn btn-game-info" onclick="openGameModal('game5')">
+                  <span>📋 Controles &amp; Detalles</span>
                 </button>
               </div>
             </div>
@@ -594,7 +756,7 @@
   <!-- Lightbox Modal para Proyectos -->
   <dialog id="imageLightbox" class="lightbox-dialog" onclick="if(event.target===this) closeLightbox()">
     <div class="lightbox-wrapper">
-      <img id="lightboxImg" src="" alt="Vista previa de proyecto">
+      <img id="lightboxImg" src="img/logo.png" alt="Vista previa de proyecto">
       <button type="button" class="lightbox-close-btn" onclick="closeLightbox()" aria-label="Cerrar vista previa">✕</button>
     </div>
   </dialog>
