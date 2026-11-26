@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conoce a Vulkanor: entidad espectral depredadora de almas y antagonista principal. Explora su historia y modelo 3D interactivo.">
+  <title>Vulkanor | Personajes 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="personajes.css">
+</head>
+<body style="--character-accent:#9a5dc8; --character-animation-accent:#84a6e4; --character-glow:rgba(154,93,200,.3)">
+  <div class="bg-ambient" aria-hidden="true"><div class="glow-blue"></div><div class="glow-gold"></div></div>
+  <header class="character-navbar">
+    <nav class="character-navbar-inner" aria-label="Navegación de personajes">
+      <a class="character-back-link" href="../index.html">← Volver al Portafolio</a>
+      <div class="character-quick-nav">
+        <a href="nakusu.html">Nakusu</a>
+        <a href="hana.html">Hana</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container character-page">
+    <section class="section character-hero" aria-labelledby="character-title">
+      <div class="character-intro">
+        <span class="character-role">VILLANO · ANTAGONISTA PRINCIPAL</span>
+        <h1 id="character-title" class="character-title">Vulkanor</h1>
+        <p class="character-subtitle">Un cazador del plano metafísico atraído por una presa que no debería existir: un alma humana viva dentro del metal.</p>
+      </div>
+      <div class="glass-card character-viewer-card">
+        <model-viewer class="character-viewer" data-character-viewer src="modelos/vulkanor.glb" alt="Modelo 3D de Vulkanor, entidad espectral depredadora de almas" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" exposure="1" interaction-prompt="auto" camera-orbit="0deg 75deg auto" touch-action="pan-y">
+        </model-viewer>
+        <p class="character-viewer-fallback" data-viewer-fallback role="alert" hidden>Este navegador no puede mostrar el modelo 3D. Prueba con una versión reciente de Chrome, Edge, Firefox o Safari.</p>
+        <div class="character-viewer-controls">
+          <label class="character-lighting-control" for="lightingSelect">Iluminación y fondo
+            <select id="lightingSelect" data-lighting-select>
+              <option data-environment="neutral" data-exposure="1" data-background="#10131a">Estudio suave</option>
+              <option data-environment="legacy" data-exposure="0.9" data-background="#17121b">Contraluz arcano</option>
+              <option data-environment="neutral" data-exposure="0.78" data-background="#080a0f">Fondo oscuro</option>
+            </select>
+          </label>
+          <button type="button" class="character-fullscreen" data-fullscreen>Ver a pantalla completa</button>
+          <p class="character-viewer-status" data-viewer-status aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section character-animation-section" aria-labelledby="animation-title">
+      <div class="glass-card character-animation-card">
+        <header class="character-animation-heading">
+          <p class="character-animation-kicker">⚡ ANIMACIÓN 3D EN TIEMPO REAL</p>
+          <h2 id="animation-title">Showcase de animación</h2>
+          <p>Explora la actuación del personaje y controla la reproducción del clip integrado en su modelo.</p>
+        </header>
+        <model-viewer class="character-animation-viewer" data-animation-viewer src="modelos/vulkanor.glb" alt="Animación 3D de Vulkanor" loading="lazy" autoplay loop camera-controls shadow-intensity="1" environment-image="neutral" exposure="1" camera-orbit="0deg 75deg auto" touch-action="pan-y">
+        </model-viewer>
+        <p class="character-animation-fallback" data-animation-fallback role="alert" hidden>No se pudo cargar la animación 3D. Comprueba que el navegador admite WebGL.</p>
+        <div class="character-animation-controls" data-animation-controls hidden>
+          <div class="character-animation-picker" data-animation-picker hidden>
+            <label for="animationSelect">Clip de animación</label>
+            <select id="animationSelect" data-animation-select></select>
+          </div>
+          <div class="character-animation-actions">
+            <button type="button" class="character-animation-button" data-animation-toggle aria-pressed="false" disabled>Pausar</button>
+            <label class="character-animation-speed">
+              Velocidad
+              <select data-animation-speed aria-label="Velocidad de reproducción">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+              </select>
+            </label>
+            <button type="button" class="character-animation-button character-animation-rotate" data-animation-rotate aria-pressed="false">Activar rotación</button>
+          </div>
+          <label class="character-animation-timeline">
+            <span>Línea de tiempo</span>
+            <input type="range" data-animation-timeline min="0" max="0" step="0.01" value="0" aria-label="Posición de la animación" disabled>
+            <output data-animation-time>0:00 / 0:00</output>
+          </label>
+        </div>
+        <p class="character-animation-status" data-animation-status role="status" aria-live="polite">Cargando animación...</p>
+      </div>
+    </section>
+
+    <section class="section character-details-grid" aria-label="Ficha y lore de Vulkanor">
+      <aside class="glass-card character-facts">
+        <h2>Ficha técnica</h2>
+        <dl>
+          <dt>Rol</dt><dd>Villano / Antagonista Principal</dd>
+          <dt>Naturaleza</dt><dd>Entidad espectral depredadora de almas</dd>
+          <dt>Paleta</dt>
+          <dd class="character-swatches" aria-label="Muestras de color de Vulkanor">
+            <span style="--swatch:#9a5dc8" title="#9a5dc8"></span><span style="--swatch:#84a6e4" title="#84a6e4"></span><span style="--swatch:#3b396d" title="#3b396d"></span><span style="--swatch:#3e3043" title="#3e3043"></span>
+          </dd>
+          <dt>Códigos HEX</dt>
+          <dd>
+            <ul class="character-color-list"><li>#9a5dc8</li><li>#84a6e4</li><li>#3b396d</li><li>#3e3043</li></ul>
+          </dd>
+        </dl>
+      </aside>
+      <article class="glass-card character-lore">
+        <h2>Historia</h2>
+        <p>Vulkanor es una entidad espectral y uno de los depredadores mágicos más temidos de la distopía. Este ser se alimenta de la esencia vital de los mortales, guiándose por un sentido ultraespecífico: el aroma dulzón y volátil que despide un alma humana justo en el instante en que abandona el cuerpo tras morir.</p>
+        <p>En este mundo en ruinas, Vulkanor suele deambular por zonas de desastre buscando agonías recientes. Sin embargo, su cacería dio un giro obsesivo cuando percibió el rastro de Nakusu. Para sus sentidos, la anomalía del robot es una presa exquisita e inaudita: un alma humana que murió pero nunca ascendió ni se disipó, quedando atrapada y latiendo intacta dentro de una carcasa de metal.</p>
+        <p>Desde que Nakusu ejecutó magia para defender a Hana y encendió su energía espiritual, Vulkanor rastrea incansablemente ese aroma único. No busca destruir por odio o conquista, sino devorar la singularidad de esa alma aprisionada para absorber la magia arcana que aún conserva de su vida pasada.</p>
+      </article>
+    </section>
+
+    <section class="section character-gallery" aria-labelledby="gallery-title">
+      <h2 id="gallery-title">Galería conceptual</h2>
+      <div class="character-gallery-empty"><span aria-hidden="true">✦</span><p>El espacio para arte conceptual y expresiones de Vulkanor está preparado. Las imágenes podrán abrirse en el lightbox del portafolio cuando estén disponibles.</p></div>
+    </section>
+  </main>
+  <dialog id="imageLightbox" class="lightbox-dialog" onclick="if(event.target===this) closeLightbox()">
+    <div class="lightbox-wrapper">
+      <img id="lightboxImg" src="../img/logo.png" alt="Vista previa del arte conceptual de Vulkanor">
+      <button type="button" class="lightbox-close-btn" onclick="closeLightbox()" aria-label="Cerrar vista previa">✕</button>
+    </div>
+  </dialog>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/personajes.js"></script>
+</body>
+</html>

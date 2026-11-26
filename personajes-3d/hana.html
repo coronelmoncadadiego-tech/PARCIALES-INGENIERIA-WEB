@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="Conoce a Hana: coprotagonista y aliada en un mundo en ruinas. Explora su historia y modelo 3D interactivo.">
+  <title>Hana | Personajes 3D</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/style.css">
+  <link rel="stylesheet" href="personajes.css">
+</head>
+<body style="--character-accent:#b9602c; --character-animation-accent:#3d4e3b; --character-glow:rgba(185,96,44,.3)">
+  <div class="bg-ambient" aria-hidden="true"><div class="glow-blue"></div><div class="glow-gold"></div></div>
+  <header class="character-navbar">
+    <nav class="character-navbar-inner" aria-label="Navegación de personajes">
+      <a class="character-back-link" href="../index.html">← Volver al Portafolio</a>
+      <div class="character-quick-nav">
+        <a href="nakusu.html">Nakusu</a>
+        <a href="vulkanor.html">Vulkanor</a>
+      </div>
+    </nav>
+  </header>
+
+  <main class="container character-page">
+    <section class="section character-hero" aria-labelledby="character-title">
+      <div class="character-intro">
+        <span class="character-role">COPROTAGONISTA · ALIADA</span>
+        <h1 id="character-title" class="character-title">Hana</h1>
+        <p class="character-subtitle">Una superviviente que encontró en Nakusu una familia y una razón para proteger lo que queda de su mundo.</p>
+      </div>
+      <div class="glass-card character-viewer-card">
+        <model-viewer class="character-viewer" data-character-viewer src="modelos/hana.glb?rev=4" alt="Modelo 3D de Hana, aliada y compañera de Nakusu" camera-controls auto-rotate shadow-intensity="1" environment-image="neutral" exposure="1" interaction-prompt="auto" camera-orbit="0deg 75deg auto" touch-action="pan-y">
+        </model-viewer>
+        <p class="character-viewer-fallback" data-viewer-fallback role="alert" hidden>Este navegador no puede mostrar el modelo 3D. Prueba con una versión reciente de Chrome, Edge, Firefox o Safari.</p>
+        <div class="character-viewer-controls">
+          <label class="character-lighting-control" for="lightingSelect">Iluminación y fondo
+            <select id="lightingSelect" data-lighting-select>
+              <option data-environment="neutral" data-exposure="1" data-background="#10131a">Estudio suave</option>
+              <option data-environment="legacy" data-exposure="0.9" data-background="#17121b">Contraluz arcano</option>
+              <option data-environment="neutral" data-exposure="0.78" data-background="#080a0f">Fondo oscuro</option>
+            </select>
+          </label>
+          <button type="button" class="character-fullscreen" data-fullscreen>Ver a pantalla completa</button>
+          <p class="character-viewer-status" data-viewer-status aria-live="polite"></p>
+        </div>
+      </div>
+    </section>
+
+    <section class="section character-animation-section" aria-labelledby="animation-title">
+      <div class="glass-card character-animation-card">
+        <header class="character-animation-heading">
+          <p class="character-animation-kicker">⚡ ANIMACIÓN 3D EN TIEMPO REAL</p>
+          <h2 id="animation-title">Showcase de animación</h2>
+          <p>Explora la actuación del personaje y controla la reproducción del clip integrado en su modelo.</p>
+        </header>
+        <model-viewer class="character-animation-viewer" data-animation-viewer src="modelos/hana.glb?rev=4" alt="Animación 3D de Hana" loading="lazy" autoplay loop camera-controls shadow-intensity="1" environment-image="neutral" exposure="1" camera-orbit="0deg 75deg auto" touch-action="pan-y">
+        </model-viewer>
+        <p class="character-animation-fallback" data-animation-fallback role="alert" hidden>No se pudo cargar la animación 3D. Comprueba que el navegador admite WebGL.</p>
+        <div class="character-animation-controls" data-animation-controls hidden>
+          <div class="character-animation-picker" data-animation-picker hidden>
+            <label for="animationSelect">Clip de animación</label>
+            <select id="animationSelect" data-animation-select></select>
+          </div>
+          <div class="character-animation-actions">
+            <button type="button" class="character-animation-button" data-animation-toggle aria-pressed="false" disabled>Pausar</button>
+            <label class="character-animation-speed">
+              Velocidad
+              <select data-animation-speed aria-label="Velocidad de reproducción">
+                <option value="0.5">0.5x</option>
+                <option value="1" selected>1x</option>
+                <option value="1.5">1.5x</option>
+              </select>
+            </label>
+            <button type="button" class="character-animation-button character-animation-rotate" data-animation-rotate aria-pressed="false">Activar rotación</button>
+          </div>
+          <label class="character-animation-timeline">
+            <span>Línea de tiempo</span>
+            <input type="range" data-animation-timeline min="0" max="0" step="0.01" value="0" aria-label="Posición de la animación" disabled>
+            <output data-animation-time>0:00 / 0:00</output>
+          </label>
+        </div>
+        <p class="character-animation-status" data-animation-status role="status" aria-live="polite">Cargando animación...</p>
+      </div>
+    </section>
+
+    <section class="section character-details-grid" aria-label="Ficha y lore de Hana">
+      <aside class="glass-card character-facts">
+        <h2>Ficha técnica</h2>
+        <dl>
+          <dt>Rol</dt><dd>Coprotagonista / Aliada</dd>
+          <dt>Estatura</dt><dd>1.62 m</dd>
+          <dt>Paleta</dt>
+          <dd class="character-swatches" aria-label="Muestras de color de Hana">
+            <span style="--swatch:#b9602c" title="#b9602c"></span><span style="--swatch:#3d4e3b" title="#3d4e3b"></span><span style="--swatch:#442a4d" title="#442a4d"></span><span style="--swatch:#654a2d" title="#654a2d"></span>
+          </dd>
+          <dt>Códigos HEX</dt>
+          <dd>
+            <ul class="character-color-list"><li>#b9602c</li><li>#3d4e3b</li><li>#442a4d</li><li>#654a2d</li></ul>
+          </dd>
+        </dl>
+      </aside>
+      <article class="glass-card character-lore">
+        <h2>Historia</h2>
+        <p>Crecida entre las ruinas de un mundo donde la magia y la tecnología colapsaron, Hana es una niña huérfana acostumbrada a sobrevivir sola. Tras ver partir a su familia y a todos sus seres queridos, aprendió a moverse con astucia por los páramos distópicos, cargando con un profundo dolor y el temor constante a la soledad.</p>
+        <p>En un vertedero de chatarra encontró el cuerpo inerte de un autómata dañado. Al notar la melancolía y el vacío en sus sensores, sintió una conexión inmediata y decidió llamarlo Nakusu (aquel que ha perdido a un ser querido), convirtiéndolo en su único compañero y familia.</p>
+        <p>Aunque sabía que los robots no pueden usar energía arcana, presenciar a Nakusu canalizar magia para salvarla en un momento de peligro la dejó en shock. A partir de ese instante, Hana comprendió que su amigo esconde una esencia humana en su interior, un secreto maravilloso pero peligroso que ahora deberá ayudarlo a proteger.</p>
+      </article>
+    </section>
+
+    <section class="section character-gallery" aria-labelledby="gallery-title">
+      <h2 id="gallery-title">Galería conceptual</h2>
+      <div class="character-gallery-empty"><span aria-hidden="true">✦</span><p>El espacio para arte conceptual y expresiones de Hana está preparado. Las imágenes podrán abrirse en el lightbox del portafolio cuando estén disponibles.</p></div>
+    </section>
+  </main>
+  <dialog id="imageLightbox" class="lightbox-dialog" onclick="if(event.target===this) closeLightbox()">
+    <div class="lightbox-wrapper">
+      <img id="lightboxImg" src="../img/logo.png" alt="Vista previa del arte conceptual de Hana">
+      <button type="button" class="lightbox-close-btn" onclick="closeLightbox()" aria-label="Cerrar vista previa">✕</button>
+    </div>
+  </dialog>
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
+  <script src="../js/main.js"></script>
+  <script src="../js/personajes.js"></script>
+</body>
+</html>

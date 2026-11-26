@@ -16,6 +16,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Press+Start+2P&family=Orbitron:wght@600;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/style.css">
+  <link rel="stylesheet" href="personajes-3d/personajes.css">
 </head>
 <body>
 
@@ -41,6 +42,7 @@
         <li><a href="#about" class="nav-item">Sobre mí</a></li>
         <li><a href="#services" class="nav-item">Servicios</a></li>
         <li><a href="#projects" class="nav-item">Proyectos</a></li>
+        <li><a href="#personajes-3d" class="nav-item">Personajes 3D</a></li>
         <li><a href="#videojuegos" class="nav-item nav-item-highlight">Videojuegos</a></li>
         <li><a href="#experience" class="nav-item">Experiencia</a></li>
         <li><a href="#stack" class="nav-item">Stack</a></li>
@@ -223,6 +225,71 @@
                 <span>Stop Motion</span> <span>After Effects</span> <span>Premiere</span>
               </div>
               <a href="#" class="project-link" onclick="openLightbox(this.parentElement.previousElementSibling); return false;">Ver Proyecto →</a>
+            </div>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <section id="personajes-3d" class="section character-showcase">
+      <div class="container">
+        <div class="character-showcase-heading">
+          <div>
+            <span class="character-section-kicker">UNIVERSO ORIGINAL · MODELADO 3D</span>
+            <h2 class="section-title">Creación de Personajes 3D</h2>
+            <p class="section-lead">Tres almas conectadas por la magia, la pérdida y una cacería que atraviesa los límites entre la vida y la muerte.</p>
+          </div>
+        </div>
+
+        <div class="character-card-grid">
+          <article class="glass-card character-card" style="--character-accent:#871a10; --character-glow:rgba(135,26,16,.32)" aria-labelledby="nakusu-card-title">
+            <a class="character-card-visual" href="personajes-3d/nakusu.html" aria-label="Explorar a Nakusu">
+              <span class="character-preview-badge">3D INTERACTIVO</span>
+              <model-viewer src="personajes-3d/modelos/nakusu.glb" alt="" aria-hidden="true" loading="lazy" reveal="auto" auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" camera-orbit="0deg 75deg 2.4m" interaction-prompt="none" disable-zoom></model-viewer>
+              <span class="character-visual-caption">N.º 01 <span>ALMA EN METAL</span></span>
+            </a>
+            <div class="character-card-content">
+              <span class="character-role">PROTAGONISTA</span>
+              <h3 id="nakusu-card-title">Nakusu</h3>
+              <p>Un alma humana en un autómata despierta una magia que nadie creía posible.</p>
+              <div class="character-swatches" aria-label="Paleta de Nakusu: rojo óxido, gris metálico, púrpura arcano y verde oliva">
+                <span style="--swatch:#871a10" title="#871a10"></span><span style="--swatch:#625b5b" title="#625b5b"></span><span style="--swatch:#7a398a" title="#7a398a"></span><span style="--swatch:#42472b" title="#42472b"></span>
+              </div>
+              <a class="btn btn-primary character-card-cta" href="personajes-3d/nakusu.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="glass-card character-card" style="--character-accent:#b9602c; --character-glow:rgba(185,96,44,.3)" aria-labelledby="hana-card-title">
+            <a class="character-card-visual" href="personajes-3d/hana.html" aria-label="Explorar a Hana">
+              <span class="character-preview-badge">3D INTERACTIVO</span>
+              <model-viewer src="personajes-3d/modelos/hana.glb" alt="" aria-hidden="true" loading="lazy" reveal="auto" auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" camera-orbit="0deg 75deg 2.4m" interaction-prompt="none" disable-zoom></model-viewer>
+              <span class="character-visual-caption">N.º 02 <span>FAMILIA ELEGIDA</span></span>
+            </a>
+            <div class="character-card-content">
+              <span class="character-role">COPROTAGONISTA · ALIADA</span>
+              <h3 id="hana-card-title">Hana</h3>
+              <p>Superviviente de las ruinas, encuentra en Nakusu a su única familia.</p>
+              <div class="character-swatches" aria-label="Paleta de Hana: cobre, verde bosque, púrpura oscuro y marrón cuero">
+                <span style="--swatch:#b9602c" title="#b9602c"></span><span style="--swatch:#3d4e3b" title="#3d4e3b"></span><span style="--swatch:#442a4d" title="#442a4d"></span><span style="--swatch:#654a2d" title="#654a2d"></span>
+              </div>
+              <a class="btn btn-primary character-card-cta" href="personajes-3d/hana.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
+            </div>
+          </article>
+
+          <article class="glass-card character-card" style="--character-accent:#9a5dc8; --character-glow:rgba(154,93,200,.3)" aria-labelledby="vulkanor-card-title">
+            <a class="character-card-visual" href="personajes-3d/vulkanor.html" aria-label="Explorar a Vulkanor">
+              <span class="character-preview-badge">3D INTERACTIVO</span>
+              <model-viewer src="personajes-3d/modelos/vulkanor.glb" alt="" aria-hidden="true" loading="lazy" reveal="auto" auto-rotate auto-rotate-delay="0" rotation-per-second="18deg" camera-orbit="0deg 75deg 2.4m" interaction-prompt="none" disable-zoom></model-viewer>
+              <span class="character-visual-caption">N.º 03 <span>DEPREDADOR ESPECTRAL</span></span>
+            </a>
+            <div class="character-card-content">
+              <span class="character-role">VILLANO · ANTAGONISTA</span>
+              <h3 id="vulkanor-card-title">Vulkanor</h3>
+              <p>Depredador de almas, rastrea la esencia única atrapada dentro de Nakusu.</p>
+              <div class="character-swatches" aria-label="Paleta de Vulkanor: violeta espectral, azul etéreo, índigo profundo y púrpura sombrío">
+                <span style="--swatch:#9a5dc8" title="#9a5dc8"></span><span style="--swatch:#84a6e4" title="#84a6e4"></span><span style="--swatch:#3b396d" title="#3b396d"></span><span style="--swatch:#3e3043" title="#3e3043"></span>
+              </div>
+              <a class="btn btn-primary character-card-cta" href="personajes-3d/vulkanor.html">Explorar Lore y Modelo 3D <span aria-hidden="true">→</span></a>
             </div>
           </article>
         </div>
@@ -772,6 +839,8 @@
     </div>
   </footer>
 
+  <script type="module" src="https://ajax.googleapis.com/ajax/libs/model-viewer/3.5.0/model-viewer.min.js"></script>
   <script src="js/main.js"></script>
+  <script src="js/personajes.js"></script>
 </body>
 </html>
